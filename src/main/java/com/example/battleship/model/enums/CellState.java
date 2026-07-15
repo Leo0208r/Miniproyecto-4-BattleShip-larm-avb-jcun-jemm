@@ -1,4 +1,4 @@
-package com.example.battleship.model;
+package com.example.battleship.model.enums;
 
 public enum CellState {
     EMPTY("Empty"),

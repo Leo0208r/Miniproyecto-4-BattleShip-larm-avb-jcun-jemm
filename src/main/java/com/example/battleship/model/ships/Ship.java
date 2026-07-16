@@ -1,11 +1,10 @@
-package com.example.battleship.model;
+package com.example.battleship.model.ships;
 
+import com.example.battleship.model.Cell;
 import com.example.battleship.model.enums.CellState;
 import com.example.battleship.model.enums.Orientation;
 import com.example.battleship.model.exceptions.InvalidShipSizeException;
 
-import java.awt.*;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

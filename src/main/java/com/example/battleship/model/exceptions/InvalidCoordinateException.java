@@ -1,6 +1,6 @@
 package com.example.battleship.model.exceptions;
 
-public class InvalidCoordinateException extends RuntimeException {
+public class InvalidCoordinateException extends Exception {
     private final int row;
     private final int col;
 

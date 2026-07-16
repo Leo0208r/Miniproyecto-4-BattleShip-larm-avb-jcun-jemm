@@ -1,13 +1,13 @@
 package com.example.battleship.model.enums;
 
 public enum ShipType {
-    AIRCRAFT_CARRIER("AircraftCarrier"),
-    DESTROYER("Destroyer"),
-    FRIGATE("Frigate"),
-    SUBMARINE("Submarine");
-    private String symbol;
-    ShipType(String symbol){
-        this.symbol=symbol;
+    AIRCRAFTCARRIER(4),
+    DESTROYER(2),
+    FRIGATE(1),
+    SUBMARINE(3);
+    private final int size;
+    ShipType(int size){
+        this.size=size;
     }
-    public String getSymbol(){return symbol;}
+    public int getSize(){return size;}
 }

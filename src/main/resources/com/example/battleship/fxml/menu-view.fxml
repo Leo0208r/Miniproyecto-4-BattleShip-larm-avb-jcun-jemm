@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #090d16;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.battleship.controller.MenuController">
+    <children>
+        <VBox alignment="CENTER" spacing="25.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
+            <children>
+                <Label style="-fx-font-size: 36px; -fx-text-fill: #00ffff; -fx-font-weight: bold;" text="CYBER BATTLESHIP" />
+                <Label style="-fx-font-size: 14px; -fx-text-fill: #8fa0b5;" text="Ingresa tus credenciales de Almirante para iniciar:" />
+                <TextField fx:id="nicknameField" maxWidth="280.0" promptText="Nombre Del Capitán" style="-fx-background-color: #121b2d; -fx-text-fill: white; -fx-border-color: #00ffff; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                <HBox alignment="CENTER" spacing="15.0">
+                    <children>
+                        <Button fx:id="startButton" onAction="#onStartButtonClick" prefWidth="140.0" styleClass="btn-neon" text="Iniciar Batalla" />
+                        <Button onAction="#onLoadGameButtonClick" prefWidth="140.0" styleClass="btn-neon" text="Continuar Partida" />
+                        <Button onAction="#onExitButtonClick" prefWidth="120.0" styleClass="btn-dark" text="Salir" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

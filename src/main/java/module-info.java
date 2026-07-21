@@ -11,4 +11,5 @@ module com.example.battleship {
     exports com.example.battleship;
     exports com.example.battleship.controller;
     exports com.example.battleship.view;
+    opens com.example.battleship.preview to javafx.graphics;
 }

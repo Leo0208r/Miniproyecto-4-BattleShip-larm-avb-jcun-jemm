@@ -31,30 +31,44 @@
     -fx-text-fill: white;
 }
 
-.ship-body {
-    -fx-fill: linear-gradient(to bottom, #3a4d6b, #1b2a47);
+.ship-hull {
+    -fx-fill: linear-gradient(to bottom, #3a4d6b, #17233b);
     -fx-stroke: #00ffff;
     -fx-stroke-width: 1.5;
 }
 
-.ship-tip {
-    -fx-fill: linear-gradient(to bottom, #3a4d6b, #1b2a47);
+.ship-superstructure {
+    -fx-fill: #223452;
     -fx-stroke: #00ffff;
-    -fx-stroke-width: 1.5;
+    -fx-stroke-width: 1;
 }
 
-/* Barco tocado (aún no hundido): tono naranja de alerta */
-.ship-hit .ship-body,
-.ship-hit .ship-tip {
-    -fx-fill: linear-gradient(to bottom, #ff9933, #b35900);
+.ship-deck-line {
+    -fx-fill: rgba(0, 255, 255, 0.5);
+}
+
+.ship-hit .ship-hull {
+    -fx-fill: linear-gradient(to bottom, #ff9933, #7a4400);
     -fx-stroke: #ffcc00;
 }
 
-/* Barco hundido: rojo apagado */
-.ship-sunk .ship-body,
-.ship-sunk .ship-tip {
+.ship-hit .ship-superstructure {
+    -fx-fill: #7a4400;
+    -fx-stroke: #ffcc00;
+}
+
+.ship-sunk .ship-hull {
     -fx-fill: #4d0000;
     -fx-stroke: #ff3333;
+}
+
+.ship-sunk .ship-superstructure {
+    -fx-fill: #3a0000;
+    -fx-stroke: #ff3333;
+}
+
+.ship-sunk .ship-deck-line {
+    -fx-fill: rgba(255, 51, 51, 0.5);
 }
 
 /* Marca de agua: punto azul translúcido */

@@ -53,6 +53,12 @@ public class Board implements Serializable {
         if (listeners!=null) listeners.remove(listener);
     }
 
+    public void restoreTransientState() {
+        if (listeners == null) {
+            listeners = new ArrayList<>();
+        }
+    }
+
     public void placeShip(Coordinate coordinate, Orientation orientation, ShipType shipType)throws ShipOverLapException{
         List<Coordinate> coordinatesShip=calculateShipCoordinates(coordinate, orientation, shipType);
         if (validateCells(coordinatesShip)){

@@ -54,5 +54,11 @@ public class GameManager implements Serializable {
         }
         return result;
     }
+
+    public void afterLoad() {
+        human.getBoard().restoreTransientState();
+        machine.getBoard().restoreTransientState();
+    }
 }
+
 

@@ -1,6 +1,7 @@
 module com.example.battleship {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.logging;
 
     // Esto le da permiso a JavaFX para buscar y cargar los archivos FXML
     opens com.example.battleship to javafx.fxml;

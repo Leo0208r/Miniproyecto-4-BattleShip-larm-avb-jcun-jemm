@@ -10,10 +10,21 @@ import com.example.battleship.model.Fleet;
 
 public class HumanPlayer extends Player {
 
+    public void placeShip(Coordinate coordinate, Orientation orientation, ShipType shipType) throws ShipOverLapException {
+        board.placeShip(coordinate, orientation, shipType);
+    }
+
+    public int getPlacedShipsCount() {
+        return board.getFleet().getShips().size();
+    }
+
+    public boolean isFleetComplete() {
+        return getPlacedShipsCount() >= Fleet.getStandardComposition().size();
+    }
+
     @Override
     public void placeFleet() {
-        // For now, place fleet randomly as a convenience so the game is playable
-        // until a UI placement flow is implemented.
+        // Helper used by the UI as an optional auto-fill action.
         java.util.Random random = new java.util.Random();
         java.util.List<ShipType> composition = Fleet.getStandardComposition();
         java.util.List<Orientation> orientations = java.util.List.of(Orientation.HORIZONTAL, Orientation.VERTICAL);

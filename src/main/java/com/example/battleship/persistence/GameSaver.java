@@ -17,10 +17,14 @@ public class GameSaver {
         }
     }
 
-    public static GameManager load(Path file) throws IOException, ClassNotFoundException{
+    public static GameManager load(Path file) throws GamePersistenceException {
         try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(Files.newInputStream(file)))){
             Object o = in.readObject();
-            return (GameManager)o;
+            GameManager manager = (GameManager) o;
+            manager.afterLoad();
+            return manager;
+        } catch (IOException | ClassNotFoundException | ClassCastException e) {
+            throw new GamePersistenceException("No se pudo leer la partida guardada", e);
         }
     }
 
@@ -33,5 +37,6 @@ public class GameSaver {
         Files.write(file, List.of(line), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 }
+
 
 

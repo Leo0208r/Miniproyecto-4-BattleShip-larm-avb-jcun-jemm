@@ -1,52 +1,64 @@
 package com.example.battleship.controller;
 
-import com.example.battleship.view.SceneManager;
-import com.example.battleship.view.ModelToViewMapper;
 import com.example.battleship.game.GameManager;
-import com.example.battleship.persistence.GameSaver;
+import com.example.battleship.game.GameSession;
 import com.example.battleship.model.Coordinate;
 import com.example.battleship.model.enums.CellState;
+import com.example.battleship.model.ships.Ship;
+import com.example.battleship.view.ModelToViewMapper;
+import com.example.battleship.view.SceneManager;
 import com.example.battleship.view.ShipView;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button; // <-- ESTA IMPORTACIÓN TE FALTABA
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.input.MouseEvent;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GameController {
 
+    private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
+
     @FXML private GridPane gridPlayerBoard;
     @FXML private GridPane gridEnemyBoard;
+    @FXML private Label lblPlayerName;
+    @FXML private Label lblPlayerShipsLeft;
     @FXML private Label lblTurnStatus;
+    @FXML private Label lblEnemyShipsLeft;
     @FXML private Label actionStatusLabel;
-    @FXML private ToggleButton btnToggleEnemyBoard; // Vinculado a tu FXML
+    @FXML private ToggleButton btnToggleEnemyBoard;
+    @FXML private Button btnSaveAndExit;
 
     private boolean showingEnemyShips = false;
     private GameManager gameManager;
-    private final Path saveFile = Paths.get("saves", "game.dat");
-    private final Path summaryFile = Paths.get("saves", "summary.txt");
+    private final ScheduledExecutorService machineExecutor = Executors.newSingleThreadScheduledExecutor();
+    private volatile boolean machineTurnScheduled;
 
     @FXML
     public void initialize() {
+        gameManager = GameSession.getInstance().requireGameManager();
+        if (!gameManager.getHuman().isFleetComplete()) {
+            SceneManager.getInstance().changeScene("shipplacement-view.fxml");
+            return;
+        }
+
         buildGrid(gridPlayerBoard, false);
         buildGrid(gridEnemyBoard, true);
 
-        // create game manager and place fleets
-        gameManager = new GameManager("Player1");
-        // auto-place human and machine fleets for now
-        gameManager.getHuman().placeFleet();
-        gameManager.getMachine().placeFleet();
-
-        // bind model to view
         ModelToViewMapper.bindBoardToGrid(gameManager.getHuman().getBoard(), gridPlayerBoard, true);
         ModelToViewMapper.bindBoardToGrid(gameManager.getMachine().getBoard(), gridEnemyBoard, false);
 
-        lblTurnStatus.setText("🎯 TURNO DEL JUGADOR");
+        lblPlayerName.setText("Comandante: " + gameManager.getNickname());
+        refreshCounters();
+        lblTurnStatus.setText(gameManager.isHumanTurn() ? "🎯 TURNO DEL JUGADOR" : "🤖 TURNO DE LA IA");
         actionStatusLabel.setText("Selecciona una coordenada en el radar enemigo.");
     }
 
@@ -56,14 +68,11 @@ public class GameController {
             for (int col = 0; col < 10; col++) {
                 Pane cell = new Pane();
                 cell.setPrefSize(32, 32);
-
-                cell.setStyle("-fx-border-color: rgba(0, 255, 255, 0.2); -fx-background-color: rgba(10, 20, 40, 0.6);");
-
-                // always set id so mapper can find cells; only attach handlers if interactive
                 cell.setId("cell_" + row + "_" + col);
+                cell.setStyle("-fx-border-color: rgba(0, 255, 255, 0.2); -fx-background-color: rgba(10, 20, 40, 0.6);");
                 if (isInteractive) {
-                    cell.setOnMouseEntered(e -> cell.setStyle("-fx-border-color: #00ffff; -fx-background-color: rgba(0, 255, 255, 0.25);"));
-                    cell.setOnMouseExited(e -> cell.setStyle("-fx-border-color: rgba(0, 255, 255, 0.2); -fx-background-color: rgba(10, 20, 40, 0.6);"));
+                    cell.setOnMouseEntered(e -> cell.setStyle("-fx-border-color: #00ffff; -fx-background-color: rgba(0, 255, 255, 0.25);") );
+                    cell.setOnMouseExited(e -> cell.setStyle("-fx-border-color: rgba(0, 255, 255, 0.2); -fx-background-color: rgba(10, 20, 40, 0.6);") );
                     cell.setOnMouseClicked(this::handleAttackEvent);
                 }
                 grid.add(cell, col, row);
@@ -80,86 +89,60 @@ public class GameController {
         try {
             Coordinate c = new Coordinate(row, col);
             CellState result = gameManager.humanShoot(c);
-            // disable further clicks on this cell
             targetCell.setOnMouseClicked(null);
             targetCell.setOnMouseEntered(null);
             targetCell.setOnMouseExited(null);
 
             actionStatusLabel.setText("Resultado: " + result);
+            refreshCounters();
+            persistGame();
 
-            // save state after each play
-            try {
-                GameSaver.save(gameManager, saveFile);
-                GameSaver.saveSummary(gameManager, summaryFile);
-            } catch (Exception ex){
-                // log but don't crash UI
-                ex.printStackTrace();
+            if (gameManager.getMachine().getBoard().isFleetDefeated()) {
+                machineExecutor.shutdownNow();
+                lblTurnStatus.setText("🏁 VICTORIA");
+                actionStatusLabel.setText("¡Felicidades! Has hundido toda la flota enemiga.");
+                return;
             }
 
-            // if shot was water, let machine play (in background)
-            if (result == CellState.WATER){
-                new Thread(() -> {
-                    try {
-                        // machine keeps playing until it misses
-                        do {
-                                    Thread.sleep(600);
-                                    CellState r = gameManager.machineShoot();
-                                    try { GameSaver.save(gameManager, saveFile); GameSaver.saveSummary(gameManager, summaryFile); } catch (Exception ignored){}
-                                    if (gameManager.getHuman().getBoard().isFleetDefeated()){
-                                // human lost
-                                javafx.application.Platform.runLater(() -> {
-                                    actionStatusLabel.setText("Has perdido. La máquina hundió toda tu flota.");
-                                });
-                                break;
-                                    }
-                                    if (r == CellState.WATER) {
-                                        break;
-                            }
-                        } while (!gameManager.isHumanTurn());
-                        javafx.application.Platform.runLater(() -> lblTurnStatus.setText("🎯 TURNO DEL JUGADOR"));
-                    } catch (Exception ex){ ex.printStackTrace(); }
-                }).start();
+            if (result == CellState.WATER) {
+                scheduleMachineTurn();
             } else {
-                // player hits or sinks and keeps turn
-                if (gameManager.getMachine().getBoard().isFleetDefeated()){
-                    actionStatusLabel.setText("¡Felicidades! Has hundido toda la flota enemiga.");
-                } else {
-                    actionStatusLabel.setText("Has acertado, sigue disparando.");
-                }
+                lblTurnStatus.setText("🎯 TURNO DEL JUGADOR");
+                actionStatusLabel.setText("Has acertado, sigue disparando.");
             }
-
-        } catch (Exception e){
-            actionStatusLabel.setText("Coordenada inválida o error al disparar: "+e.getMessage());
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error al procesar disparo", e);
+            actionStatusLabel.setText("Coordenada inválida o error al disparar: " + e.getMessage());
         }
     }
 
     @FXML
     private void onViewEnemyShipsButtonClick() {
         showingEnemyShips = !showingEnemyShips;
+        gridEnemyBoard.getChildren().removeIf(n -> n instanceof ShipView);
 
         if (showingEnemyShips) {
             btnToggleEnemyBoard.setText("🙈 Ocultar Barcos Enemigos");
             actionStatusLabel.setText("¡Satélite activado! Viendo la ubicación de la flota enemiga.");
 
-            // place ShipViews for all enemy ships
-            for (com.example.battleship.model.ships.Ship ship : gameManager.getMachine().getBoard().getFleet().getShips()){
-                ShipView.placeOnGrid(gridEnemyBoard, ship);
+            for (Ship ship : gameManager.getMachine().getBoard().getFleet().getShips()) {
+                ShipView view = ShipView.placeOnGrid(gridEnemyBoard, ship);
+                view.setMouseTransparent(true);
             }
         } else {
             btnToggleEnemyBoard.setText("👁 Ver Barcos Enemigos");
             actionStatusLabel.setText("Modo radar normal restaurado.");
-
-            // remove ShipView nodes
-            gridEnemyBoard.getChildren().removeIf(n -> n instanceof com.example.battleship.view.ShipView);
+            buildGrid(gridEnemyBoard, true);
+            ModelToViewMapper.bindBoardToGrid(gameManager.getMachine().getBoard(), gridEnemyBoard, false);
         }
     }
 
     @FXML
     private void onSurrenderButtonClick() {
+        machineExecutor.shutdownNow();
         SceneManager.getInstance().changeScene("gameover-view.fxml");
     }
 
-    // FXML handlers expected by the FXML files (aliases to existing methods)
     @FXML
     private void handleToggleEnemyBoard() {
         onViewEnemyShipsButtonClick();
@@ -168,5 +151,54 @@ public class GameController {
     @FXML
     private void handleSaveAndExit() {
         onSurrenderButtonClick();
+    }
+
+    private void persistGame() {
+        GameSession.getInstance().saveCurrentGame();
+    }
+
+    private void refreshCounters() {
+        lblPlayerShipsLeft.setText("Flota Aliada: " + gameManager.getHuman().getBoard().getFleet().getRemainingShipsCount() + "/10");
+        lblEnemyShipsLeft.setText("Flota Enemiga: " + gameManager.getMachine().getBoard().getFleet().getRemainingShipsCount() + "/10");
+    }
+
+    private void scheduleMachineTurn() {
+        if (machineTurnScheduled) {
+            return;
+        }
+        machineTurnScheduled = true;
+        lblTurnStatus.setText("🤖 TURNO DE LA IA");
+        machineExecutor.schedule(this::executeMachineTurnStep, 600, TimeUnit.MILLISECONDS);
+    }
+
+    private void executeMachineTurnStep() {
+        try {
+            CellState result = gameManager.machineShoot();
+            persistGame();
+            Platform.runLater(this::refreshCounters);
+
+            if (gameManager.getHuman().getBoard().isFleetDefeated()) {
+                machineExecutor.shutdownNow();
+                Platform.runLater(() -> {
+                    actionStatusLabel.setText("Has perdido. La máquina hundió toda tu flota.");
+                    lblTurnStatus.setText("☠ DERROTA");
+                });
+                machineTurnScheduled = false;
+                return;
+            }
+
+            if (result == CellState.WATER) {
+                Platform.runLater(() -> {
+                    lblTurnStatus.setText("🎯 TURNO DEL JUGADOR");
+                    actionStatusLabel.setText("La IA falló. Vuelve a disparar.");
+                });
+                machineTurnScheduled = false;
+            } else {
+                machineExecutor.schedule(this::executeMachineTurnStep, 600, TimeUnit.MILLISECONDS);
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.WARNING, "Error en el turno de la IA", ex);
+            machineTurnScheduled = false;
+        }
     }
 }

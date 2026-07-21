@@ -1,13 +1,19 @@
 package com.example.battleship.model.players;
 
+import com.example.battleship.model.Board;
+import com.example.battleship.model.Coordinate;
+import com.example.battleship.model.enums.CellState;
+import com.example.battleship.model.enums.ShipType;
+
 public abstract class Player {
-    protected  String name;
-    protected int sunkenShips;
-    public Player(String name, int sunkenShips){
-        this.name=name;
-        this.sunkenShips=sunkenShips;
+    protected final Board board;
+    public Player(){
+        board= new Board();
     }
-    public abstract void  shot();
-    public String getName(){return name;}
-    public int getSunkenShips(){return sunkenShips;}
+    public Board getBoard(){return board;}
+    public abstract void placeFleet();
+    public abstract Coordinate chooseShotTarget();
+    public void registerShotResult(Coordinate coordinate, CellState result){
+
+    }
 }

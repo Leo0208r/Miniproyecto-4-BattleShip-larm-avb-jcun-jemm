@@ -1,8 +1,7 @@
 package com.example.battleship.model.players;
 
-import com.example.battleship.model.Board;
-import com.example.battleship.model.Coordinate;
-import com.example.battleship.model.Fleet;
+import com.example.battleship.model.*;
+import com.example.battleship.model.enums.CellState;
 import com.example.battleship.model.enums.Orientation;
 import com.example.battleship.model.enums.ShipType;
 import com.example.battleship.model.exceptions.InvalidCoordinateException;
@@ -12,7 +11,11 @@ import java.util.List;
 import java.util.Random;
 
 public class MachinePlayer extends Player{
-    private Random random=new Random();
+    private final Random random=new Random();
+    private final IShootingStrategy shootingStrategy;
+    public MachinePlayer(){
+        this.shootingStrategy=new HuntTargetStrategy();
+    }
     @Override
     public void placeFleet() {
         List<ShipType> composition= Fleet.getStandardComposition();
@@ -36,7 +39,11 @@ public class MachinePlayer extends Player{
     }
 
     @Override
-    public Coordinate chooseShotTarget(Board opponentBoard) {
-        return null;
+    public Coordinate chooseShotTarget() {
+        return shootingStrategy.selectTarget();
+    }
+    @Override
+    public void registerShotResult(Coordinate coordinate, CellState result){
+        shootingStrategy.registerResult(coordinate, result);
     }
 }

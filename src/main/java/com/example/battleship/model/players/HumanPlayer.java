@@ -11,7 +11,7 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public Coordinate chooseShotTarget(Board opponentBoard) {
+    public Coordinate chooseShotTarget() {
         return null;
     }
 }

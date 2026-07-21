@@ -139,18 +139,9 @@ public class GameController {
 
     @FXML
     private void onSurrenderButtonClick() {
+        persistGame();
         machineExecutor.shutdownNow();
         SceneManager.getInstance().changeScene("gameover-view.fxml");
-    }
-
-    @FXML
-    private void handleToggleEnemyBoard() {
-        onViewEnemyShipsButtonClick();
-    }
-
-    @FXML
-    private void handleSaveAndExit() {
-        onSurrenderButtonClick();
     }
 
     private void persistGame() {
@@ -158,8 +149,10 @@ public class GameController {
     }
 
     private void refreshCounters() {
-        lblPlayerShipsLeft.setText("Flota Aliada: " + gameManager.getHuman().getBoard().getFleet().getRemainingShipsCount() + "/10");
-        lblEnemyShipsLeft.setText("Flota Enemiga: " + gameManager.getMachine().getBoard().getFleet().getRemainingShipsCount() + "/10");
+        int humanRemaining = gameManager.getHuman().getBoard().getFleet().getRemainingShipsCount();
+        int machineRemaining = gameManager.getMachine().getBoard().getFleet().getRemainingShipsCount();
+        lblPlayerShipsLeft.setText("Flota Aliada: Restantes " + humanRemaining + "/10 | Hundidos " + gameManager.getHuman().getBoard().getFleet().getSunkShipsCount() + "/10");
+        lblEnemyShipsLeft.setText("Flota Enemiga: Restantes " + machineRemaining + "/10 | Hundidos " + gameManager.getMachine().getBoard().getFleet().getSunkShipsCount() + "/10");
     }
 
     private void scheduleMachineTurn() {

@@ -14,6 +14,8 @@ module com.example.battleship {
     exports com.example.battleship.controller;
     exports com.example.battleship.view;
     exports com.example.battleship.model;
+    exports com.example.battleship.model.enums;
+    exports com.example.battleship.model.exceptions;
     exports com.example.battleship.model.players;
     exports com.example.battleship.game;
     exports com.example.battleship.persistence;

@@ -37,12 +37,12 @@ public class ModelToViewMapper {
                     } else if (newState == CellState.HIT) {
                         pane.getChildren().add(ShotMarkView.hit());
                     } else if (newState == CellState.SUNK) {
-                        // optionally show sunk mark (use hit mark for now)
-                        pane.getChildren().add(ShotMarkView.hit());
+                        pane.getChildren().add(ShotMarkView.sunk());
                     }
                 }
             });
         });
     }
 }
+
 

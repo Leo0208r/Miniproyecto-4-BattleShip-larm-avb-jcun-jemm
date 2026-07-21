@@ -83,7 +83,7 @@
                       </VBox>
       
                       <!-- Debug feature button (HU-3 for teacher inspection) -->
-                      <ToggleButton fx:id="btnToggleEnemyBoard" mnemonicParsing="false" onAction="#handleToggleEnemyBoard" style="-fx-background-color: #7c3aed; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;" text="👁 Modo Inspección (Profesor)">
+                       <ToggleButton fx:id="btnToggleEnemyBoard" mnemonicParsing="false" onAction="#onViewEnemyShipsButtonClick" style="-fx-background-color: #7c3aed; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;" text="👁 Modo Inspección (Profesor)">
                           <font>
                               <Font name="System Bold" size="12.0" />
                           </font>
@@ -92,7 +92,7 @@
                           </padding>
                       </ToggleButton>
       
-                      <Button fx:id="btnSaveAndExit" mnemonicParsing="false" onAction="#handleSaveAndExit" style="-fx-background-color: #dc2626; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;" text="💾 Guardar y Salir">
+                       <Button fx:id="btnSaveAndExit" mnemonicParsing="false" onAction="#onSurrenderButtonClick" style="-fx-background-color: #dc2626; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;" text="💾 Guardar y Salir">
                           <font>
                               <Font name="System Bold" size="12.0" />
                           </font>

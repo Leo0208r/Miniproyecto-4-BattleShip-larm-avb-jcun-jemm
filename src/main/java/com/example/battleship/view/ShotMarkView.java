@@ -44,4 +44,21 @@ public class ShotMarkView extends Group {
         mark.getChildren().addAll(diagonal1, diagonal2);
         return mark;
     }
+
+    /** Marcador más intenso para una celda perteneciente a un barco hundido. */
+    public static ShotMarkView sunk() {
+        ShotMarkView mark = new ShotMarkView();
+        Circle ring = new Circle(ShipView.CELL_SIZE / 3.8);
+        ring.setCenterX(ShipView.CELL_SIZE / 2.0);
+        ring.setCenterY(ShipView.CELL_SIZE / 2.0);
+        ring.getStyleClass().add("mark-sunk");
+
+        Line diagonal1 = new Line(7.0, 7.0, ShipView.CELL_SIZE - 7.0, ShipView.CELL_SIZE - 7.0);
+        Line diagonal2 = new Line(ShipView.CELL_SIZE - 7.0, 7.0, 7.0, ShipView.CELL_SIZE - 7.0);
+        diagonal1.getStyleClass().add("mark-sunk");
+        diagonal2.getStyleClass().add("mark-sunk");
+
+        mark.getChildren().addAll(ring, diagonal1, diagonal2);
+        return mark;
+    }
 }

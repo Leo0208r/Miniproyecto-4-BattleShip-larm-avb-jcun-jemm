@@ -168,9 +168,11 @@ public class PlacementController {
 
     @FXML
     private void handleBackToMenu() {
+        GameSession.getInstance().saveCurrentGame();
         SceneManager.getInstance().changeScene("menu-view.fxml");
     }
 }
+
 
 
 

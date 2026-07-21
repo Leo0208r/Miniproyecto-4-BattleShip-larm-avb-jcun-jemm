@@ -47,15 +47,15 @@ public class Cell implements Serializable {
         else if (cellState==CellState.OCCUPIED){
             setCellState(CellState.HIT);
             if(ship.registerHit()){
-               return cellState;
+               return CellState.SUNK;
             }
+            return CellState.HIT;
         }else{
             throw new RepeatedShotException("Cell already shot, current state: "+cellState.getSymbol(), cellState );
         }
-        return cellState;
     }
     @Override
     public String toString(){
-        return "Cell"+coordinate.toString()+"[State="+cellState+"]";
+        return "Cell"+coordinate+"[State="+cellState+"]";
     }
 }

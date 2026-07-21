@@ -5,6 +5,7 @@ import com.example.battleship.model.enums.Orientation;
 import com.example.battleship.model.enums.ShipType;
 import com.example.battleship.model.exceptions.InvalidCoordinateException;
 import com.example.battleship.model.exceptions.RepeatedShotException;
+import com.example.battleship.model.exceptions.ShipOverLapException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -85,7 +86,7 @@ class BoardTest {
     }
 
     @Test
-    void placingAShipShouldMarkItsCellsAsOccupied() {
+    void placingAShipShouldMarkItsCellsAsOccupied() throws ShipOverLapException {
         Board board = new Board();
         Coordinate coordinate = new Coordinate(0, 0);
 
@@ -96,7 +97,7 @@ class BoardTest {
     }
 
     @Test
-    void shootingAPlacedShipShouldSinkIt() throws RepeatedShotException {
+    void shootingAPlacedShipShouldSinkIt() throws RepeatedShotException, ShipOverLapException {
         Board board = new Board();
         Coordinate coordinate = new Coordinate(0, 0);
         board.placeShip(coordinate, Orientation.HORIZONTAL, ShipType.FRIGATE);

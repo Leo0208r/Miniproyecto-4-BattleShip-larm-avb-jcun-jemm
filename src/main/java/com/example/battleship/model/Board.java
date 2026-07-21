@@ -32,6 +32,7 @@ public class Board {
     public Map<Coordinate,Cell> getBoard(){
         return Collections.unmodifiableMap(board);
     }
+
     public void placeShip(Coordinate coordinate, Orientation orientation, ShipType shipType){
         List<Coordinate> coordinatesShip=calculateShipCoordinates(coordinate, orientation, shipType);
         try{

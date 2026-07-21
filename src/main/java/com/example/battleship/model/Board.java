@@ -32,18 +32,14 @@ public class Board {
     public Map<Coordinate,Cell> getBoard(){
         return Collections.unmodifiableMap(board);
     }
-    public void placeShip(Coordinate coordinate, Orientation orientation, ShipType shipType){
+    public void placeShip(Coordinate coordinate, Orientation orientation, ShipType shipType)throws ShipOverLapException{
         List<Coordinate> coordinatesShip=calculateShipCoordinates(coordinate, orientation, shipType);
-        try{
-            if (validateCells(coordinatesShip)){
-                List<Cell> cells=new ArrayList<>();
-                for (Coordinate coordinates: coordinatesShip){
-                    cells.add(getCell(coordinates));
-                }
-                fleet.addShip(ShipFactory.createShip(shipType,orientation,cells));
+        if (validateCells(coordinatesShip)){
+            List<Cell> cells=new ArrayList<>();
+            for (Coordinate coordinates: coordinatesShip){
+                cells.add(getCell(coordinates));
             }
-        }catch (ShipOverLapException exception){
-            System.out.println(exception.getMessage());
+            fleet.addShip(ShipFactory.createShip(shipType,orientation,cells));
         }
     }
     private boolean validateCells(List<Coordinate>coordinatesList)throws ShipOverLapException{

@@ -1,10 +1,12 @@
 package com.example.battleship.model;
 
+import com.example.battleship.model.enums.ShipType;
 import com.example.battleship.model.ships.Ship;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class Fleet {
     private final List<Ship> ships;
@@ -63,5 +65,21 @@ public class Fleet {
             }
         }
         return count<sizeAndMax.get(size);
+    }
+    public static List<ShipType> getStandardComposition(){
+        List<ShipType> shipsTypes=new ArrayList<>(10);
+        for (int i=0; i<sizeAndMax.get(4);i++){
+            shipsTypes.add(ShipType.AIRCRAFTCARRIER);
+        }
+        for (int i=0; i<sizeAndMax.get(3);i++){
+            shipsTypes.add(ShipType.SUBMARINE);
+        }
+        for (int i=0; i<sizeAndMax.get(2);i++){
+            shipsTypes.add(ShipType.DESTROYER);
+        }
+        for (int i=0; i<sizeAndMax.get(1);i++){
+            shipsTypes.add(ShipType.FRIGATE);
+        }
+        return shipsTypes;
     }
 }

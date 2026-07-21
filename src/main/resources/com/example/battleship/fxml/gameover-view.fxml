@@ -14,12 +14,11 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-
-<StackPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.battleship.controller.GameOverController">
+<StackPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.battleship.controller.EndController">
    <children>
       <ImageView fitHeight="720.0" fitWidth="1281.0" pickOnBounds="true">
          <image>
-            <Image url="@63186.jpg" />
+            <Image url="@images/63186.jpg" />
          </image>
       </ImageView>
       <VBox alignment="CENTER" prefHeight="720.0" prefWidth="1280.0" spacing="20.0">
@@ -135,7 +134,7 @@
                       </VBox>
       
                       <!-- Return Button -->
-                      <Button fx:id="btnMainMenu" mnemonicParsing="false" onAction="#handleReturnToMenu" style="-fx-background-color: linear-gradient(to right, #0284c7, #0369a1); -fx-text-fill: #ffffff; -fx-background-radius: 8; -fx-cursor: hand;" text="⬅ VOLVER AL MENÚ PRINCIPAL">
+                      <Button fx:id="btnMainMenu" mnemonicParsing="false" onAction="#onRestartButtonClick" style="-fx-background-color: linear-gradient(to right, #0284c7, #0369a1); -fx-text-fill: #ffffff; -fx-background-radius: 8; -fx-cursor: hand;" text="⬅ VOLVER AL MENÚ PRINCIPAL">
                           <font>
                               <Font name="System Bold" size="16.0" />
                           </font>

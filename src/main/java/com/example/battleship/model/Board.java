@@ -2,6 +2,7 @@ package com.example.battleship.model;
 
 import com.example.battleship.model.enums.CellState;
 import com.example.battleship.model.enums.Orientation;
+import com.example.battleship.model.ships.Ship;
 import com.example.battleship.model.enums.ShipType;
 import com.example.battleship.model.exceptions.InvalidCoordinateException;
 import com.example.battleship.model.exceptions.RepeatedShotException;
@@ -21,6 +22,7 @@ public class Board {
         fleet= new Fleet();
         fillBoard();
     }
+
     private void fillBoard() {
         for (int row=0;row<=9;row++){
             for (int col=0; col<=9; col++){
@@ -29,6 +31,7 @@ public class Board {
             }
         }
     }
+
     public Map<Coordinate,Cell> getBoard(){
         return Collections.unmodifiableMap(board);
     }
@@ -41,12 +44,17 @@ public class Board {
                 for (Coordinate coordinates: coordinatesShip){
                     cells.add(getCell(coordinates));
                 }
-                fleet.addShip(ShipFactory.createShip(shipType,orientation,cells));
+                Ship ship = ShipFactory.createShip(shipType,orientation,cells);
+                fleet.addShip(ship);
+                for (Cell cell: cells){
+                    cell.assignShip(ship);
+                }
             }
         }catch (ShipOverLapException exception){
             System.out.println(exception.getMessage());
         }
     }
+
     private boolean validateCells(List<Coordinate>coordinatesList)throws ShipOverLapException{
         for (Coordinate coordinate: coordinatesList){
             if(getCell(coordinate).hasShip()){
@@ -55,6 +63,7 @@ public class Board {
         }
         return true;
     }
+
     private List<Coordinate> calculateShipCoordinates(Coordinate start, Orientation orientation, ShipType type){
         List<Coordinate> coordinates= new ArrayList<>();
         if (orientation==HORIZONTAL){
@@ -75,15 +84,18 @@ public class Board {
         }
         return coordinates;
     }
+
     public Cell getCell(Coordinate coordinate){
         if (coordinate == null) {
             throw new IllegalArgumentException("Coordinate cannot be null");
         }
         return board.get(coordinate);
     }
+
     public CellState shoot(Coordinate coordinate)throws RepeatedShotException {
         return getCell(coordinate).receiveShot();
     }
+
     public boolean isFleetDefeated(){
         return fleet.isFleetSunk();
     }

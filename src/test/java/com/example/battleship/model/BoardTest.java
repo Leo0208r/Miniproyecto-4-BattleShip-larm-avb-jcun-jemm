@@ -85,22 +85,25 @@ class BoardTest {
     }
 
     @Test
-    void placingAShipDoesNotCurrentlyMarkItsCellsAsOccupied() {
-        // KNOWN BUG: Board.placeShip() builds the Ship and adds it to the
-        // internal Fleet, but never calls Cell.assignShip() on the cells
-        // it occupies. As a result, the board's cells never reflect the
-        // ship's presence and shooting on top of a placed ship is
-        // currently indistinguishable from shooting an empty cell.
-        //
-        // This test documents the CURRENT (buggy) behavior on purpose.
-        // Once placeShip() is fixed to link cells to their ship, this
-        // test should be rewritten to assert hasShip() == true instead.
+    void placingAShipShouldMarkItsCellsAsOccupied() {
         Board board = new Board();
         Coordinate coordinate = new Coordinate(0, 0);
 
         board.placeShip(coordinate, Orientation.HORIZONTAL, ShipType.FRIGATE);
 
-        assertFalse(board.getCell(coordinate).hasShip(),
-                "Expected current buggy behavior: cell is not linked to its ship yet");
+        assertTrue(board.getCell(coordinate).hasShip());
+        assertEquals(CellState.OCCUPIED, board.getCell(coordinate).getCellState());
+    }
+
+    @Test
+    void shootingAPlacedShipShouldSinkIt() throws RepeatedShotException {
+        Board board = new Board();
+        Coordinate coordinate = new Coordinate(0, 0);
+        board.placeShip(coordinate, Orientation.HORIZONTAL, ShipType.FRIGATE);
+
+        CellState result = board.shoot(coordinate);
+
+        assertEquals(CellState.SUNK, result);
+        assertTrue(board.isFleetDefeated());
     }
 }

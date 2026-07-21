@@ -1,0 +1,32 @@
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+/* Botón Neón Principal */
+.btn-neon {
+    -fx-background-color: transparent;
+    -fx-border-color: #00ffff;
+    -fx-border-width: 2;
+    -fx-border-radius: 4;
+    -fx-text-fill: #00ffff;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.btn-neon:hover {
+    -fx-background-color: #00ffff;
+    -fx-text-fill: #090d16;
+}
+
+/* Botón Secundario Oscuro */
+.btn-dark {
+    -fx-background-color: #1b2a47;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.btn-dark:hover {
+    -fx-background-color: #ff3333;
+    -fx-text-fill: white;
+}

@@ -3,12 +3,14 @@ package com.example.battleship.model;
 import com.example.battleship.model.enums.ShipType;
 import com.example.battleship.model.ships.Ship;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class Fleet {
+public class Fleet implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final List<Ship> ships;
     private static final Map<Integer,Integer> sizeAndMax= Map.of(
             4,1,

@@ -3,8 +3,10 @@ package com.example.battleship.model;
 import com.example.battleship.model.enums.CellState;
 import com.example.battleship.model.exceptions.RepeatedShotException;
 import com.example.battleship.model.ships.Ship;
+import java.io.Serializable;
 
-public class Cell {
+public class Cell implements Serializable {
+    private static final long serialVersionUID = 1L;
     private CellState cellState;
     private final Coordinate coordinate;
     private Ship ship;

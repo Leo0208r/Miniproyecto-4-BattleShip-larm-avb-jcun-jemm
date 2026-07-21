@@ -9,14 +9,17 @@ import com.example.battleship.model.exceptions.RepeatedShotException;
 import com.example.battleship.model.exceptions.ShipOverLapException;
 import javafx.scene.input.ScrollEvent;
 
+import java.io.Serializable;
 import java.util.*;
 
 import static com.example.battleship.model.enums.Orientation.HORIZONTAL;
 import static com.example.battleship.model.enums.Orientation.VERTICAL;
 
-public class Board {
+public class Board implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final Map<Coordinate,Cell> board;
     private final Fleet fleet;
+    private transient List<BoardListener> listeners = new ArrayList<>();
     public Board() {
         board=new HashMap<>();
         fleet= new Fleet();
@@ -36,6 +39,20 @@ public class Board {
         return Collections.unmodifiableMap(board);
     }
 
+    public Fleet getFleet(){
+        return fleet;
+    }
+
+    public void addListener(BoardListener listener){
+        if (listener==null) return;
+        if (listeners==null) listeners=new ArrayList<>();
+        listeners.add(listener);
+    }
+
+    public void removeListener(BoardListener listener){
+        if (listeners!=null) listeners.remove(listener);
+    }
+
     public void placeShip(Coordinate coordinate, Orientation orientation, ShipType shipType)throws ShipOverLapException{
         List<Coordinate> coordinatesShip=calculateShipCoordinates(coordinate, orientation, shipType);
         if (validateCells(coordinatesShip)){
@@ -47,6 +64,12 @@ public class Board {
             fleet.addShip(ship);
             for (Cell cell: cells){
                 cell.assignShip(ship);
+                // notify listeners about ship placement per cell
+                if (listeners!=null){
+                    for (BoardListener l: listeners){
+                        try{ l.onCellUpdated(cell.getCoordinate(), cell.getCellState()); }catch(Exception ignore){}
+                    }
+                }
             }
         }
     }
@@ -89,7 +112,13 @@ public class Board {
     }
 
     public CellState shoot(Coordinate coordinate)throws RepeatedShotException {
-        return getCell(coordinate).receiveShot();
+        CellState result = getCell(coordinate).receiveShot();
+        if (listeners!=null){
+            for (BoardListener l: listeners){
+                try{ l.onCellUpdated(coordinate, result);}catch(Exception ignore){}
+            }
+        }
+        return result;
     }
 
     public boolean isFleetDefeated(){

@@ -5,10 +5,12 @@ import com.example.battleship.model.enums.CellState;
 import com.example.battleship.model.enums.Orientation;
 import com.example.battleship.model.exceptions.InvalidShipSizeException;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class Ship {
+public abstract class Ship implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final int size;
     private final Orientation orientation;
     private final List<Cell> cells;
@@ -37,11 +39,11 @@ public abstract class Ship {
     }
     public boolean isSunk(){
         for (Cell cell: cells){
-            if (cell.getCellState()==CellState.SUNK){
-                return true;
+            if (cell.getCellState() != CellState.SUNK){
+                return false;
             }
         }
-        return false;
+        return true;
     }
     private boolean validateSize(int size, int sizeCells){
         return sizeCells==size;

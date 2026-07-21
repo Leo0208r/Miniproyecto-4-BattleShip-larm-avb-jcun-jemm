@@ -25,13 +25,20 @@ public class SceneManager {
 
     public void changeScene(String fxmlFile) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/battleship/fxml/" + fxmlFile));
+            java.net.URL fxmlUrl = getClass().getResource("/com/example/battleship/fxml/" + fxmlFile);
+            if (fxmlUrl == null) {
+                throw new IOException("No se encontró el recurso FXML: /com/example/battleship/fxml/" + fxmlFile);
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
             Scene scene = new Scene(root);
 
             // Vincular la hoja de estilos CSS para el look oscuro/neón
-            String css = getClass().getResource("/com/example/battleship/css/style.css").toExternalForm();
-            scene.getStylesheets().add(css);
+            java.net.URL cssUrl = getClass().getResource("/com/example/battleship/css/style.css");
+            if (cssUrl != null) {
+                scene.getStylesheets().add(cssUrl.toExternalForm());
+            }
 
             stage.setScene(scene);
             stage.setTitle("Battleship - Cyber Fleet");
@@ -39,7 +46,7 @@ public class SceneManager {
             stage.show();
         } catch (IOException e) {
             System.err.println("Error crítico al intentar cargar la escena FXML: " + fxmlFile);
-            e.printStackTrace();
+            System.err.println("Detalle: " + e.getMessage());
         }
     }
 }

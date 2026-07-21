@@ -1,8 +1,10 @@
 package com.example.battleship.model;
 
 import com.example.battleship.model.exceptions.InvalidCoordinateException;
+import java.io.Serializable;
 
-public class Coordinate {
+public class Coordinate implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final int row;
     private final int col;
     public Coordinate(int row, int col) throws InvalidCoordinateException{

@@ -7,33 +7,34 @@ import javafx.scene.control.TextField;
 
 public class MenuController {
 
-    @FXML private TextField nicknameField;
-    @FXML private Button startButton;
+    // fx:id names must match those defined in FXML
+    @FXML private TextField txtNickname;
+    @FXML private Button btnNewGame;
+    @FXML private Button btnContinue;
+    @FXML private Button btnExit;
 
     @FXML
     public void initialize() {
-        startButton.disableProperty().bind(nicknameField.textProperty().isEmpty());
+        // disable "New Game" until nickname is provided
+        btnNewGame.disableProperty().bind(txtNickname.textProperty().isEmpty());
+        btnContinue.disableProperty().set(false); // make available if save exists (could be improved)
     }
 
-
     @FXML
-    private void onLoadGameButtonClick() {
-        System.out.println("Cargando partida guardada...");
+    private void handleNewGame() {
+        String playerNickname = txtNickname.getText().trim();
+        System.out.println("Nueva partida para: " + playerNickname);
         SceneManager.getInstance().changeScene("game-view.fxml");
     }
 
     @FXML
-    private void onStartButtonClick() {
-        String playerNickname = nicknameField.getText().trim();
-        System.out.println("Jugador registrado: " + playerNickname);
-
-
-
+    private void handleContinue() {
+        System.out.println("Continuar partida...");
         SceneManager.getInstance().changeScene("game-view.fxml");
     }
 
     @FXML
-    private void onExitButtonClick() {
+    private void handleExit() {
         System.exit(0);
     }
 }

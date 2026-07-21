@@ -36,22 +36,18 @@ public class Board {
         return Collections.unmodifiableMap(board);
     }
 
-    public void placeShip(Coordinate coordinate, Orientation orientation, ShipType shipType){
+    public void placeShip(Coordinate coordinate, Orientation orientation, ShipType shipType)throws ShipOverLapException{
         List<Coordinate> coordinatesShip=calculateShipCoordinates(coordinate, orientation, shipType);
-        try{
-            if (validateCells(coordinatesShip)){
-                List<Cell> cells=new ArrayList<>();
-                for (Coordinate coordinates: coordinatesShip){
-                    cells.add(getCell(coordinates));
-                }
-                Ship ship = ShipFactory.createShip(shipType,orientation,cells);
-                fleet.addShip(ship);
-                for (Cell cell: cells){
-                    cell.assignShip(ship);
-                }
+        if (validateCells(coordinatesShip)){
+            List<Cell> cells=new ArrayList<>();
+            for (Coordinate coordinates: coordinatesShip){
+                cells.add(getCell(coordinates));
             }
-        }catch (ShipOverLapException exception){
-            System.out.println(exception.getMessage());
+            Ship ship = ShipFactory.createShip(shipType,orientation,cells);
+            fleet.addShip(ship);
+            for (Cell cell: cells){
+                cell.assignShip(ship);
+            }
         }
     }
 

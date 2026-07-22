@@ -31,54 +31,100 @@
     -fx-text-fill: white;
 }
 
+/* Main hull (frigate, destroyer, carrier: gray; submarine overridden below) */
 .ship-hull {
-    -fx-fill: linear-gradient(to bottom, #3a4d6b, #17233b);
-    -fx-stroke: #00ffff;
-    -fx-stroke-width: 1.5;
-}
-
-.ship-superstructure {
-    -fx-fill: #223452;
-    -fx-stroke: #00ffff;
+    -fx-fill: linear-gradient(to bottom, #8b8f94, #5a5e63);
+    -fx-stroke: #2b2d30;
     -fx-stroke-width: 1;
 }
 
-.ship-deck-line {
-    -fx-fill: rgba(0, 255, 255, 0.5);
+/* Submarine hull uses its own blue palette */
+.submarine .ship-hull {
+    -fx-fill: linear-gradient(to bottom, #3a6b9c, #1f3f5e);
+    -fx-stroke: #12283d;
 }
 
-.ship-hit .ship-hull {
-    -fx-fill: linear-gradient(to bottom, #ff9933, #7a4400);
-    -fx-stroke: #ffcc00;
+/* Structures: deckhouses, towers, islands, elevators, trapezoids */
+.ship-detail {
+    -fx-fill: #75787c;
+    -fx-stroke: #2b2d30;
+    -fx-stroke-width: 1;
+}
+.submarine .ship-detail {
+    -fx-fill: #2c5580;
+    -fx-stroke: #12283d;
 }
 
-.ship-hit .ship-superstructure {
-    -fx-fill: #7a4400;
-    -fx-stroke: #ffcc00;
+/* Light accents: radar domes, sensor domes */
+.ship-detail-light {
+    -fx-fill: #9a9d9f;
+    -fx-stroke: #2b2d30;
+    -fx-stroke-width: 0.5;
 }
 
-.ship-sunk .ship-hull {
-    -fx-fill: #4d0000;
-    -fx-stroke: #ff3333;
+/* Dark accents: guns, turrets, missile grid cells */
+.ship-detail-dark {
+    -fx-fill: #43474b;
+    -fx-stroke: #1c1d1f;
+    -fx-stroke-width: 0.5;
+}
+.ship-detail-darker {
+    -fx-fill: #1c1d1f;
 }
 
-.ship-sunk .ship-superstructure {
-    -fx-fill: #3a0000;
-    -fx-stroke: #ff3333;
+/* Bridge/portholes windows */
+.ship-window {
+    -fx-fill: #e8e6e0;
+    -fx-stroke: #2b2d30;
+    -fx-stroke-width: 0.5;
+}
+.submarine .ship-window {
+    -fx-fill: #7fb3d9;
+    -fx-stroke: none;
 }
 
-.ship-sunk .ship-deck-line {
-    -fx-fill: rgba(255, 51, 51, 0.5);
-}
-
-/* Marca de agua: punto azul translúcido */
-.mark-water {
-    -fx-fill: rgba(0, 200, 255, 0.7);
-}
-
-/* Marca de tocado (X) sobre una celda suelta */
-.mark-hit {
-    -fx-stroke: #ff3333;
-    -fx-stroke-width: 3;
+/* Masts */
+.ship-mast {
+    -fx-stroke: #2b2d30;
+    -fx-stroke-width: 2;
     -fx-stroke-line-cap: round;
+}
+
+/* Deck markings: centerline, parking stripes */
+.ship-marking {
+    -fx-stroke: #e8e8e8;
+    -fx-stroke-width: 1.5;
+}
+
+/* Parked/scattered planes on the carrier deck */
+.ship-plane {
+    -fx-fill: #c9cdd0;
+    -fx-stroke: #2b2d30;
+    -fx-stroke-width: 0.5;
+}
+
+/* Submarine hull rivets */
+.ship-rivet {
+    -fx-fill: #2a4d6e;
+    -fx-stroke: #12283d;
+    -fx-stroke-width: 0.5;
+}
+
+/* Hit state: reddish tint over hull and structures */
+.ship-hit .ship-hull {
+    -fx-fill: linear-gradient(to bottom, #b3552a, #7a3618);
+}
+.ship-hit .ship-detail {
+    -fx-fill: #c98a5c;
+}
+
+/* Sunk state: dark, ash-like tone with red outline */
+.ship-sunk .ship-hull {
+    -fx-fill: #2a2420;
+    -fx-stroke: #ff3333;
+}
+.ship-sunk .ship-detail,
+.ship-sunk .ship-detail-light,
+.ship-sunk .ship-detail-dark {
+    -fx-fill: #1a1714;
 }

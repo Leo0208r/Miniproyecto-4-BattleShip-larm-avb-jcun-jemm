@@ -24,6 +24,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GameController {
 
@@ -40,6 +42,8 @@ public class GameController {
     @FXML private Button btnSaveAndExit;
 
     private boolean showingEnemyShips = false;
+    // Mantener referencia a los barcos hundidos que ya fueron revelados
+    private final Set<Ship> revealedSunkenShips = new HashSet<>();
     private GameManager gameManager;
     private final ScheduledExecutorService machineExecutor = Executors.newSingleThreadScheduledExecutor();
     private volatile boolean machineTurnScheduled;
@@ -141,6 +145,21 @@ public class GameController {
             actionStatusLabel.setText("Modo radar normal restaurado.");
             buildGrid(gridEnemyBoard, true);
             ModelToViewMapper.bindBoardToGrid(gameManager.getMachine().getBoard(), gridEnemyBoard, false);
+
+            // Volver a mostrar los barcos hundidos previamente revelados
+            for (Ship s : revealedSunkenShips) {
+                try {
+                    ShipView v = ShipView.from(s);
+                    v.markSunk();
+                    v.setMouseTransparent(true);
+                    Coordinate start = s.getCells().get(0).getCoordinate();
+                    int colSpan = s.getOrientation() == Orientation.HORIZONTAL ? s.getSize() : 1;
+                    int rowSpan = s.getOrientation() == Orientation.VERTICAL ? s.getSize() : 1;
+                    gridEnemyBoard.add(v, start.getCol(), start.getRow(), colSpan, rowSpan);
+                } catch (Exception ex) {
+                    LOGGER.log(Level.FINE, "No se pudo re-anadir barco hundido al tablero", ex);
+                }
+            }
         }
     }
 
@@ -228,6 +247,9 @@ public class GameController {
                 int rowSpan = sunkenShip.getOrientation() == Orientation.VERTICAL ? sunkenShip.getSize() : 1;
 
                 gridEnemyBoard.add(shipView, start.getCol(), start.getRow(), colSpan, rowSpan);
+
+                // registrar como revelado para mantenerlo visible al alternar vista
+                revealedSunkenShips.add(sunkenShip);
 
                 actionStatusLabel.setText("¡Barco enemigo HUNDIDO! 💥");
             }

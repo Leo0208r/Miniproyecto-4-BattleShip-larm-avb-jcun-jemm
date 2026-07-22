@@ -2,11 +2,16 @@ package com.example.battleship.view;
 
 import com.example.battleship.model.Coordinate;
 import com.example.battleship.model.enums.Orientation;
+import com.example.battleship.model.enums.ShipType;
+import com.example.battleship.model.ships.AircraftCarrier;
+import com.example.battleship.model.ships.Destroyer;
+import com.example.battleship.model.ships.Frigate;
 import com.example.battleship.model.ships.Ship;
+import com.example.battleship.model.ships.Submarine;
+import com.example.battleship.view.shapes.ShipShapeFactory;
 import javafx.scene.Group;
 import javafx.scene.layout.GridPane;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
+
 
 /**
  * Representación visual 2D de un barco, dibujada con JavaFX Shapes
@@ -22,60 +27,20 @@ public class ShipView extends Group {
 
     /** Debe coincidir con el tamaño de celda usado en GameController (32x32). */
     public static final double CELL_SIZE = 32.0;
-    private static final double MARGIN = 3.0;
 
-    private final Rectangle body;
-    private final Orientation orientation;
 
-    public ShipView(int size, Orientation orientation) {
-        this.orientation = orientation;
-        this.body = buildBody(size);
-        getChildren().add(body);
-        addBowAndStern();
+    private final Group shape;
+
+    /** Construye la vista del barco usando las implementaciones detalladas en view.shapes */
+    public ShipView(Ship ship) {
+        ShipType type = detectType(ship);
+        this.shape = ShipShapeFactory.create(type, ship.getOrientation(), CELL_SIZE);
+        getChildren().add(shape);
         getStyleClass().add("ship-view");
     }
 
-    private Rectangle buildBody(int size) {
-        double length = size * CELL_SIZE - MARGIN * 2;
-        double thickness = CELL_SIZE - MARGIN * 2;
-
-        Rectangle rect = new Rectangle();
-        if (orientation == Orientation.HORIZONTAL) {
-            rect.setWidth(length);
-            rect.setHeight(thickness);
-        } else {
-            rect.setWidth(thickness);
-            rect.setHeight(length);
-        }
-        rect.setX(MARGIN);
-        rect.setY(MARGIN);
-        rect.setArcWidth(thickness * 0.6);
-        rect.setArcHeight(thickness * 0.6);
-        rect.getStyleClass().add("ship-body");
-        return rect;
-    }
-
-    private void addBowAndStern() {
-        double radius = (CELL_SIZE - MARGIN * 2) / 2.0;
-
-        Circle bow = new Circle(radius);
-        Circle stern = new Circle(radius);
-        bow.getStyleClass().add("ship-tip");
-        stern.getStyleClass().add("ship-tip");
-
-        if (orientation == Orientation.HORIZONTAL) {
-            bow.setCenterX(MARGIN + radius);
-            bow.setCenterY(MARGIN + radius);
-            stern.setCenterX(MARGIN + body.getWidth() - radius);
-            stern.setCenterY(MARGIN + radius);
-        } else {
-            bow.setCenterX(MARGIN + radius);
-            bow.setCenterY(MARGIN + radius);
-            stern.setCenterX(MARGIN + radius);
-            stern.setCenterY(MARGIN + body.getHeight() - radius);
-        }
-        getChildren().addAll(bow, stern);
-    }
+    // Los detalles de la forma están en los paquetes view.shapes; no necesitamos construir
+    // manualmente rectángulos aquí. Mantenemos MARGIN por compatibilidad futura.
 
     /** Aplica el estilo visual de "tocado" (aún no hundido). */
     public void markHit() {
@@ -93,12 +58,26 @@ public class ShipView extends Group {
     }
 
     /**
-     * Construye el ShipView correspondiente a un Ship del modelo,
-     * usando su tamaño y orientación.
-     */
-    public static ShipView from(Ship ship) {
-        return new ShipView(ship.getSize(), ship.getOrientation());
-    }
+      /** Construye el ShipView correspondiente a un Ship del modelo,
+       * usando la forma detallada según su tipo y orientación.
+       */
+      public static ShipView from(Ship ship) {
+          return new ShipView(ship);
+      }
+
+      private static ShipType detectType(Ship ship) {
+          if (ship instanceof AircraftCarrier) return ShipType.AIRCRAFTCARRIER;
+          if (ship instanceof Submarine) return ShipType.SUBMARINE;
+          if (ship instanceof Destroyer) return ShipType.DESTROYER;
+          if (ship instanceof Frigate) return ShipType.FRIGATE;
+          // fallback by size
+          switch (ship.getSize()) {
+              case 4: return ShipType.AIRCRAFTCARRIER;
+              case 3: return ShipType.SUBMARINE;
+              case 2: return ShipType.DESTROYER;
+              default: return ShipType.FRIGATE;
+          }
+      }
 
     /**
      * Crea el ShipView de un barco y lo agrega al GridPane, alineado

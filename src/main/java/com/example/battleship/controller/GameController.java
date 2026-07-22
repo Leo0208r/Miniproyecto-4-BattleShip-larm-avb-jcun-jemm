@@ -42,8 +42,6 @@ public class GameController {
     @FXML private Button btnSaveAndExit;
 
     private boolean showingEnemyShips = false;
-    // Mantener referencia a los barcos hundidos que ya fueron revelados
-    private final Set<Ship> revealedSunkenShips = new HashSet<>();
     private GameManager gameManager;
     private final ScheduledExecutorService machineExecutor = Executors.newSingleThreadScheduledExecutor();
     private volatile boolean machineTurnScheduled;
@@ -61,6 +59,9 @@ public class GameController {
 
         ModelToViewMapper.bindBoardToGrid(gameManager.getHuman().getBoard(), gridPlayerBoard, true);
         ModelToViewMapper.bindBoardToGrid(gameManager.getMachine().getBoard(), gridEnemyBoard, false);
+
+        // Restaurar barcos revelados que fueron guardados en una partida anterior
+        restoreRevealedSunkenShips();
 
         lblPlayerName.setText("Comandante: " + gameManager.getNickname());
         refreshCounters();
@@ -139,6 +140,12 @@ public class GameController {
             for (Ship ship : gameManager.getMachine().getBoard().getFleet().getShips()) {
                 ShipView view = ShipView.placeOnGrid(gridEnemyBoard, ship);
                 view.setMouseTransparent(true);
+                // store reference so we can update its visual state later (e.g., mark sunk)
+                view.setUserData(ship);
+                // if this ship was already revealed as sunken previously, mark its view
+                if (gameManager.getRevealedSunkenShips().contains(ship)) {
+                    view.markSunk();
+                }
             }
         } else {
             btnToggleEnemyBoard.setText("👁 Ver Barcos Enemigos");
@@ -146,8 +153,8 @@ public class GameController {
             buildGrid(gridEnemyBoard, true);
             ModelToViewMapper.bindBoardToGrid(gameManager.getMachine().getBoard(), gridEnemyBoard, false);
 
-            // Volver a mostrar los barcos hundidos previamente revelados
-            for (Ship s : revealedSunkenShips) {
+            // Volver a mostrar los barcos hundidos previamente revelados (persistidos en GameManager)
+            for (Ship s : gameManager.getRevealedSunkenShips()) {
                 try {
                     ShipView v = ShipView.from(s);
                     v.markSunk();
@@ -172,6 +179,26 @@ public class GameController {
 
     private void persistGame() {
         GameSession.getInstance().saveCurrentGame();
+    }
+
+    /**
+     * Restaura los barcos hundidos que fueron guardados en una partida anterior.
+     * Se ejecuta durante la inicialización para mostrar los barcos hundidos persisted.
+     */
+    private void restoreRevealedSunkenShips() {
+        for (Ship s : gameManager.getRevealedSunkenShips()) {
+            try {
+                ShipView v = ShipView.from(s);
+                v.markSunk();
+                v.setMouseTransparent(true);
+                Coordinate start = s.getCells().get(0).getCoordinate();
+                int colSpan = s.getOrientation() == Orientation.HORIZONTAL ? s.getSize() : 1;
+                int rowSpan = s.getOrientation() == Orientation.VERTICAL ? s.getSize() : 1;
+                gridEnemyBoard.add(v, start.getCol(), start.getRow(), colSpan, rowSpan);
+            } catch (Exception ex) {
+                LOGGER.log(Level.FINE, "No se pudo restaurar barco hundido al tablero", ex);
+            }
+        }
     }
 
     private void refreshCounters() {
@@ -227,17 +254,27 @@ public class GameController {
      */
     private void revealSunkenShip(Coordinate hitCoordinate) {
         try {
-            // Si estamos viendo todos los barcos enemigos, no hacer nada
-            // ya que están todos visibles
-            if (showingEnemyShips) {
-                return;
-            }
-
             Cell cell = gameManager.getMachine().getBoard().getCell(hitCoordinate);
             if (cell != null && cell.getShip() != null) {
                 Ship sunkenShip = cell.getShip();
 
-                // Mostrar el barco hundido
+                // registrar como revelado para mantenerlo visible al alternar vista y persistir
+                gameManager.addRevealedSunkenShip(sunkenShip);
+
+                // Si actualmente estamos mostrando todos los barcos, actualiza su vista
+                if (showingEnemyShips) {
+                    for (var node : gridEnemyBoard.getChildren()) {
+                        if (node instanceof ShipView sv && sv.getUserData() == sunkenShip) {
+                            sv.markSunk();
+                            sv.setMouseTransparent(true);
+                            actionStatusLabel.setText("¡Barco enemigo HUNDIDO! 💥");
+                            return;
+                        }
+                    }
+                    // si no se encontró (por seguridad), caer hacia la adición normal
+                }
+
+                // Mostrar el barco hundido (modo normal)
                 ShipView shipView = ShipView.from(sunkenShip);
                 shipView.markSunk();
                 shipView.setMouseTransparent(true);
@@ -247,9 +284,6 @@ public class GameController {
                 int rowSpan = sunkenShip.getOrientation() == Orientation.VERTICAL ? sunkenShip.getSize() : 1;
 
                 gridEnemyBoard.add(shipView, start.getCol(), start.getRow(), colSpan, rowSpan);
-
-                // registrar como revelado para mantenerlo visible al alternar vista
-                revealedSunkenShips.add(sunkenShip);
 
                 actionStatusLabel.setText("¡Barco enemigo HUNDIDO! 💥");
             }

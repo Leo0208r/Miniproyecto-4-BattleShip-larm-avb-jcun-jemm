@@ -3,8 +3,10 @@ package com.example.battleship.view;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.util.Objects;
 
 public class SceneManager {
     private static SceneManager instance;
@@ -21,6 +23,12 @@ public class SceneManager {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+
+        Image icon = new Image(
+                Objects.requireNonNull(getClass().getResourceAsStream("/com/example/battleship/fxml/icons/barco.png"))
+        );
+
+        stage.getIcons().add(icon);
     }
 
     public void changeScene(String fxmlFile) {

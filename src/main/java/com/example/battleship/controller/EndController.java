@@ -38,6 +38,8 @@ public class EndController {
         lblPlayerMissedShots.setText(String.valueOf(countShots(gameManager.getMachine().getBoard().getBoard().values(), com.example.battleship.model.enums.CellState.WATER)));
         lblPlayerShipsSunk.setText(gameManager.getHuman().getBoard().getFleet().getSunkShipsCount() + " / 10");
         lblEnemyMissedShots.setText(String.valueOf(countShots(gameManager.getHuman().getBoard().getBoard().values(), com.example.battleship.model.enums.CellState.WATER)));
+
+        GameSession.getInstance().clearSavedGame();
     }
 
     private long countShots(java.util.Collection<com.example.battleship.model.Cell> cells, com.example.battleship.model.enums.CellState state) {
@@ -49,4 +51,3 @@ public class EndController {
         SceneManager.getInstance().changeScene("menu-view.fxml");
     }
 }
-

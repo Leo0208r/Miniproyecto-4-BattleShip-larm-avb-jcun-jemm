@@ -76,6 +76,15 @@ public final class GameSession {
         }
     }
 
+    public void clearSavedGame() {
+        try {
+            Files.deleteIfExists(SAVE_FILE);
+            Files.deleteIfExists(SUMMARY_FILE);
+        } catch (IOException e) {
+            System.err.println("No se pudo borrar la partida guardada: " + e.getMessage());
+        }
+    }
+
     public HumanPlayer getHumanPlayer() {
         return currentGameManager == null ? null : currentGameManager.getHuman();
     }
@@ -87,6 +96,3 @@ public final class GameSession {
         return currentGameManager;
     }
 }
-
-
-

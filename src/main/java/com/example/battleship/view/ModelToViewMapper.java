@@ -32,14 +32,24 @@ public class ModelToViewMapper {
             String id = "cell_" + coord.getRow() + "_" + coord.getCol();
             Node node = grid.lookup("#" + id);
             if (node instanceof Pane pane && (state == CellState.WATER || state == CellState.HIT || state == CellState.SUNK)) {
-                pane.getChildren().clear();
+                // Remove any existing mark for this cell (we'll add it directly to the grid so it can
+                // render above ShipView without the cell background covering it).
+                String markId = "mark_" + coord.getRow() + "_" + coord.getCol();
+                Node existing = grid.lookup("#" + markId);
+                if (existing != null) grid.getChildren().remove(existing);
+
+                ShotMarkView mark;
                 if (state == CellState.WATER) {
-                    pane.getChildren().add(ShotMarkView.water());
+                    mark = ShotMarkView.water();
                 } else if (state == CellState.HIT) {
-                    pane.getChildren().add(ShotMarkView.hit());
-                } else if (state == CellState.SUNK) {
-                    pane.getChildren().add(ShotMarkView.sunk());
+                    mark = ShotMarkView.hit();
+                } else {
+                    mark = ShotMarkView.sunk();
                 }
+                mark.setId(markId);
+                mark.setMouseTransparent(true);
+                grid.add(mark, coord.getCol(), coord.getRow());
+                mark.toFront();
             }
         }
 
@@ -49,19 +59,35 @@ public class ModelToViewMapper {
                 String id = "cell_" + coordinate.getRow() + "_" + coordinate.getCol();
                 Node node = grid.lookup("#" + id);
                 if (node instanceof Pane pane) {
-                    pane.getChildren().clear();
+                    String markId = "mark_" + coordinate.getRow() + "_" + coordinate.getCol();
+                    Node existing = grid.lookup("#" + markId);
+                    if (existing != null) grid.getChildren().remove(existing);
+
                     if (newState == CellState.WATER) {
-                        pane.getChildren().add(ShotMarkView.water());
+                        ShotMarkView m = ShotMarkView.water();
+                        m.setId(markId);
+                        m.setMouseTransparent(true);
+                        grid.add(m, coordinate.getCol(), coordinate.getRow());
+                        m.toFront();
                     } else if (newState == CellState.HIT) {
-                        pane.getChildren().add(ShotMarkView.hit());
+                        ShotMarkView m = ShotMarkView.hit();
+                        m.setId(markId);
+                        m.setMouseTransparent(true);
+                        grid.add(m, coordinate.getCol(), coordinate.getRow());
+                        m.toFront();
                     } else if (newState == CellState.SUNK) {
-                        pane.getChildren().add(ShotMarkView.sunk());
+                        ShotMarkView m = ShotMarkView.sunk();
+                        m.setId(markId);
+                        m.setMouseTransparent(true);
+                        grid.add(m, coordinate.getCol(), coordinate.getRow());
+                        m.toFront();
                     }
                 }
             });
         });
     }
 }
+
 
 
 

@@ -170,11 +170,9 @@ public class GameController {
                     v.markSunk();
                     for (var cell : s.getCells()) {
                         Coordinate cc = cell.getCoordinate();
-                        String id = "cell_" + cc.getRow() + "_" + cc.getCol();
-                        var node = gridEnemyBoard.lookup("#" + id);
-                        if (node instanceof Pane p) {
-                            p.toFront();
-                        }
+                        String markId = "mark_" + cc.getRow() + "_" + cc.getCol();
+                        var node = gridEnemyBoard.lookup("#" + markId);
+                        if (node != null) node.toFront();
                     }
                 } catch (Exception ex) {
                     LOGGER.log(Level.FINE, "No se pudo re-anadir barco hundido al tablero", ex);
@@ -211,11 +209,9 @@ public class GameController {
                 v.markSunk();
                 for (var cell : s.getCells()) {
                     Coordinate cc = cell.getCoordinate();
-                    String id = "cell_" + cc.getRow() + "_" + cc.getCol();
-                    var node = gridEnemyBoard.lookup("#" + id);
-                    if (node instanceof Pane p) {
-                        p.toFront();
-                    }
+                    String markId = "mark_" + cc.getRow() + "_" + cc.getCol();
+                    var node = gridEnemyBoard.lookup("#" + markId);
+                    if (node != null) node.toFront();
                 }
             } catch (Exception ex) {
                 LOGGER.log(Level.FINE, "No se pudo restaurar barco hundido al tablero", ex);
@@ -237,9 +233,11 @@ public class GameController {
     private void enforceGridChildrenViewOrder(GridPane grid) {
         for (var node : grid.getChildren()) {
             if (node instanceof Pane) {
-                node.setViewOrder(-1.0);
+                // cell backgrounds should be behind ships
+                node.setViewOrder(100.0);
             } else if (node instanceof ShipView) {
-                node.setViewOrder(1.0);
+                // ships render above cell backgrounds but below shot marks
+                node.setViewOrder(0.0);
             } else {
                 node.setViewOrder(0.0);
             }
@@ -307,13 +305,13 @@ public class GameController {
                             sv.markSunk();
                             sv.setMouseTransparent(true);
                             // asegurar panes de las celdas queden por encima
-                            for (var c : sunkenShip.getCells()) {
-                                Coordinate cc = c.getCoordinate();
-                                String id = "cell_" + cc.getRow() + "_" + cc.getCol();
-                                var node2 = gridEnemyBoard.lookup("#" + id);
-                                if (node2 instanceof Pane p) p.toFront();
-                            }
-                            enforceGridChildrenViewOrder(gridEnemyBoard);
+                                    for (var c : sunkenShip.getCells()) {
+                                                Coordinate cc = c.getCoordinate();
+                                                String markId = "mark_" + cc.getRow() + "_" + cc.getCol();
+                                                var node2 = gridEnemyBoard.lookup("#" + markId);
+                                                if (node2 != null) node2.toFront();
+                                            }
+                                            enforceGridChildrenViewOrder(gridEnemyBoard);
                             actionStatusLabel.setText("¡Barco enemigo HUNDIDO! 💥");
                             return;
                         }
@@ -333,14 +331,12 @@ public class GameController {
                 shipView.markSunk();
                 shipView.setMouseTransparent(true);
 
-                // Asegurar que las celdas con marcas (panes) queden por encima del barco
+                // Asegurar que las marcas (shot marks) queden por encima del barco
                 for (var cell2 : sunkenShip.getCells()) {
                     Coordinate cc = cell2.getCoordinate();
-                    String id = "cell_" + cc.getRow() + "_" + cc.getCol();
-                    var node3 = gridEnemyBoard.lookup("#" + id);
-                    if (node3 instanceof Pane p) {
-                        p.toFront();
-                    }
+                    String markId = "mark_" + cc.getRow() + "_" + cc.getCol();
+                    var node3 = gridEnemyBoard.lookup("#" + markId);
+                    if (node3 != null) node3.toFront();
                 }
 
                 // Forzar orden de renderizado del grid

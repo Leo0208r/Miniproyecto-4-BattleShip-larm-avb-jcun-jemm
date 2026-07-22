@@ -141,7 +141,7 @@ public class GameController {
     private void onSurrenderButtonClick() {
         persistGame();
         machineExecutor.shutdownNow();
-        SceneManager.getInstance().changeScene("gameover-view.fxml");
+        SceneManager.getInstance().changeScene("menu-view.fxml");
     }
 
     private void persistGame() {

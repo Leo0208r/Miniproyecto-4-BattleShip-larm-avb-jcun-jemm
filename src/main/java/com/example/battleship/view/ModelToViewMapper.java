@@ -25,6 +25,24 @@ public class ModelToViewMapper {
             }
         }
 
+        // render all existing cell states (important for loaded games)
+        for (var cellEntry : board.getBoard().entrySet()) {
+            Coordinate coord = cellEntry.getKey();
+            CellState state = cellEntry.getValue().getCellState();
+            String id = "cell_" + coord.getRow() + "_" + coord.getCol();
+            Node node = grid.lookup("#" + id);
+            if (node instanceof Pane pane && (state == CellState.WATER || state == CellState.HIT || state == CellState.SUNK)) {
+                pane.getChildren().clear();
+                if (state == CellState.WATER) {
+                    pane.getChildren().add(ShotMarkView.water());
+                } else if (state == CellState.HIT) {
+                    pane.getChildren().add(ShotMarkView.hit());
+                } else if (state == CellState.SUNK) {
+                    pane.getChildren().add(ShotMarkView.sunk());
+                }
+            }
+        }
+
         // register listener to update cells when they change
         board.addListener((Coordinate coordinate, CellState newState) -> {
             Platform.runLater(() -> {
@@ -44,5 +62,6 @@ public class ModelToViewMapper {
         });
     }
 }
+
 
 

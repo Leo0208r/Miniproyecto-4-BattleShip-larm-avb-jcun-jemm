@@ -37,6 +37,9 @@ public class ShipView extends Group {
         this.shape = ShipShapeFactory.create(type, ship.getOrientation(), CELL_SIZE);
         getChildren().add(shape);
         getStyleClass().add("ship-view");
+        // Por defecto, dar un viewOrder mucho mayor para que los barcos se dibujen detrás de marcas
+        // (en JavaFX, menor viewOrder se pinta encima). Usamos separaciones grandes para robustez.
+        this.setViewOrder(100.0);
     }
 
     // Los detalles de la forma están en los paquetes view.shapes; no necesitamos construir
@@ -55,6 +58,10 @@ public class ShipView extends Group {
         if (!getStyleClass().contains("ship-sunk")) {
             getStyleClass().add("ship-sunk");
         }
+        // Enviar el ShipView al fondo y reforzar viewOrder para evitar que aparezca encima
+        this.toBack();
+        this.setViewOrder(100.0);
+        this.setMouseTransparent(true);
     }
 
     /**

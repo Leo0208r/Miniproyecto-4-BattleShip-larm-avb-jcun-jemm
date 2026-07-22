@@ -22,6 +22,8 @@ public class ShotMarkView extends Group {
     /** Punto pequeño centrado en la celda, para un disparo al agua. */
     public static ShotMarkView water() {
         ShotMarkView mark = new ShotMarkView();
+        // Marcas deben tener viewOrder mucho menor para dibujarse por encima de los barcos
+        mark.setViewOrder(-100.0);
         Circle splash = new Circle(ShipView.CELL_SIZE / 6.0);
         splash.setCenterX(ShipView.CELL_SIZE / 2.0);
         splash.setCenterY(ShipView.CELL_SIZE / 2.0);
@@ -34,6 +36,8 @@ public class ShotMarkView extends Group {
     /** X centrada en la celda, para un disparo que tocó un barco. */
     public static ShotMarkView hit() {
         ShotMarkView mark = new ShotMarkView();
+        // Marcas deben tener viewOrder mucho menor para dibujarse por encima de los barcos
+        mark.setViewOrder(-100.0);
         double margin = 8.0;
         double size = ShipView.CELL_SIZE;
 
@@ -53,6 +57,8 @@ public class ShotMarkView extends Group {
     /** Marcador más intenso para una celda perteneciente a un barco hundido. */
     public static ShotMarkView sunk() {
         ShotMarkView mark = new ShotMarkView();
+        // Marcas deben tener viewOrder mucho menor para dibujarse por encima de los barcos
+        mark.setViewOrder(-100.0);
         Circle ring = new Circle(ShipView.CELL_SIZE / 3.8);
         ring.setCenterX(ShipView.CELL_SIZE / 2.0);
         ring.setCenterY(ShipView.CELL_SIZE / 2.0);

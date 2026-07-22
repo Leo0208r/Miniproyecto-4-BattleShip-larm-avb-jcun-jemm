@@ -125,6 +125,7 @@
                                       <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="38.0" />
                                       <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="38.0" />
                                       <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="38.0" />
+                              <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="38.0" />
                                   </columnConstraints>
                                   <rowConstraints>
                                       <RowConstraints prefHeight="38.0" valignment="CENTER" vgrow="NEVER" />
@@ -136,6 +137,7 @@
                                       <RowConstraints prefHeight="38.0" valignment="CENTER" vgrow="NEVER" />
                                       <RowConstraints prefHeight="38.0" valignment="CENTER" vgrow="NEVER" />
                                       <RowConstraints prefHeight="38.0" valignment="CENTER" vgrow="NEVER" />
+                              <RowConstraints minHeight="10.0" prefHeight="38.0" valignment="CENTER" vgrow="NEVER" />
                                       <RowConstraints prefHeight="38.0" valignment="CENTER" vgrow="NEVER" />
                                   </rowConstraints>
                               </GridPane>
@@ -165,6 +167,7 @@
                                       <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="38.0" />
                                       <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="38.0" />
                                       <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="38.0" />
+                              <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="38.0" />
                                   </columnConstraints>
                                   <rowConstraints>
                                       <RowConstraints prefHeight="38.0" valignment="CENTER" vgrow="NEVER" />
@@ -176,6 +179,7 @@
                                       <RowConstraints prefHeight="38.0" valignment="CENTER" vgrow="NEVER" />
                                       <RowConstraints prefHeight="38.0" valignment="CENTER" vgrow="NEVER" />
                                       <RowConstraints prefHeight="38.0" valignment="CENTER" vgrow="NEVER" />
+                              <RowConstraints minHeight="10.0" prefHeight="38.0" valignment="CENTER" vgrow="NEVER" />
                                       <RowConstraints prefHeight="38.0" valignment="CENTER" vgrow="NEVER" />
                                   </rowConstraints>
                                   <effect>

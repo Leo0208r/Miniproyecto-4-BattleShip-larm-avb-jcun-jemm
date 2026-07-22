@@ -111,8 +111,8 @@ public class GameController {
 
             if (gameManager.getMachine().getBoard().isFleetDefeated()) {
                 machineExecutor.shutdownNow();
-                lblTurnStatus.setText("🏁 VICTORIA");
-                actionStatusLabel.setText("¡Felicidades! Has hundido toda la flota enemiga.");
+                persistGame();
+                SceneManager.getInstance().changeScene("gameover-view.fxml");
                 return;
             }
 
@@ -226,8 +226,8 @@ public class GameController {
             if (gameManager.getHuman().getBoard().isFleetDefeated()) {
                 machineExecutor.shutdownNow();
                 Platform.runLater(() -> {
-                    actionStatusLabel.setText("Has perdido. La máquina hundió toda tu flota.");
-                    lblTurnStatus.setText("☠ DERROTA");
+                    persistGame();
+                    SceneManager.getInstance().changeScene("gameover-view.fxml");
                 });
                 machineTurnScheduled = false;
                 return;

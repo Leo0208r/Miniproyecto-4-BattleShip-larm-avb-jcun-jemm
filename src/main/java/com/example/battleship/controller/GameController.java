@@ -2,8 +2,10 @@ package com.example.battleship.controller;
 
 import com.example.battleship.game.GameManager;
 import com.example.battleship.game.GameSession;
+import com.example.battleship.model.Cell;
 import com.example.battleship.model.Coordinate;
 import com.example.battleship.model.enums.CellState;
+import com.example.battleship.model.enums.Orientation;
 import com.example.battleship.model.ships.Ship;
 import com.example.battleship.view.ModelToViewMapper;
 import com.example.battleship.view.SceneManager;
@@ -96,6 +98,11 @@ public class GameController {
             actionStatusLabel.setText("Resultado: " + result);
             refreshCounters();
             persistGame();
+
+            // Si el disparo hundió un barco, revelarlo en el GridPane
+            if (result == CellState.SUNK) {
+                revealSunkenShip(c);
+            }
 
             if (gameManager.getMachine().getBoard().isFleetDefeated()) {
                 machineExecutor.shutdownNow();
@@ -192,6 +199,40 @@ public class GameController {
         } catch (Exception ex) {
             LOGGER.log(Level.WARNING, "Error en el turno de la IA", ex);
             machineTurnScheduled = false;
+        }
+    }
+
+    /**
+     * Revela un barco enemigo hundido en el GridPane.
+     * Busca el barco en la coordenada disparada y lo muestra en el tablero enemigo.
+     */
+    private void revealSunkenShip(Coordinate hitCoordinate) {
+        try {
+            // Si estamos viendo todos los barcos enemigos, no hacer nada
+            // ya que están todos visibles
+            if (showingEnemyShips) {
+                return;
+            }
+
+            Cell cell = gameManager.getMachine().getBoard().getCell(hitCoordinate);
+            if (cell != null && cell.getShip() != null) {
+                Ship sunkenShip = cell.getShip();
+
+                // Mostrar el barco hundido
+                ShipView shipView = ShipView.from(sunkenShip);
+                shipView.markSunk();
+                shipView.setMouseTransparent(true);
+
+                Coordinate start = sunkenShip.getCells().get(0).getCoordinate();
+                int colSpan = sunkenShip.getOrientation() == Orientation.HORIZONTAL ? sunkenShip.getSize() : 1;
+                int rowSpan = sunkenShip.getOrientation() == Orientation.VERTICAL ? sunkenShip.getSize() : 1;
+
+                gridEnemyBoard.add(shipView, start.getCol(), start.getRow(), colSpan, rowSpan);
+
+                actionStatusLabel.setText("¡Barco enemigo HUNDIDO! 💥");
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.WARNING, "Error al revelar barco hundido", ex);
         }
     }
 }

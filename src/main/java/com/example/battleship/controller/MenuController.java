@@ -1,39 +1,52 @@
 package com.example.battleship.controller;
 
+import com.example.battleship.game.GameSession;
 import com.example.battleship.view.SceneManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 
 public class MenuController {
 
-    @FXML private TextField nicknameField;
-    @FXML private Button startButton;
+    // fx:id names must match those defined in FXML
+    @FXML private TextField txtNickname;
+    @FXML private Button btnNewGame;
+    @FXML private Button btnContinue;
+    @FXML private Button btnExit;
 
     @FXML
     public void initialize() {
-        startButton.disableProperty().bind(nicknameField.textProperty().isEmpty());
-    }
-
-
-    @FXML
-    private void onLoadGameButtonClick() {
-        System.out.println("Cargando partida guardada...");
-        SceneManager.getInstance().changeScene("game-view.fxml");
+        // disable "New Game" until nickname is provided
+        btnNewGame.disableProperty().bind(txtNickname.textProperty().isEmpty());
+        btnContinue.setDisable(!GameSession.getInstance().hasSavedGame());
     }
 
     @FXML
-    private void onStartButtonClick() {
-        String playerNickname = nicknameField.getText().trim();
-        System.out.println("Jugador registrado: " + playerNickname);
-
-
-
-        SceneManager.getInstance().changeScene("game-view.fxml");
+    private void handleNewGame() {
+        String playerNickname = txtNickname.getText().trim();
+        GameSession.getInstance().startNewGame(playerNickname);
+        SceneManager.getInstance().changeScene("shipplacement-view.fxml");
     }
 
     @FXML
-    private void onExitButtonClick() {
+    private void handleContinue() {
+        if (GameSession.getInstance().loadLatestSave()) {
+            boolean placementComplete = GameSession.getInstance().getCurrentGameManager() != null
+                    && GameSession.getInstance().getCurrentGameManager().getHuman().isFleetComplete();
+            SceneManager.getInstance().changeScene(placementComplete ? "game-view.fxml" : "shipplacement-view.fxml");
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Partida no disponible");
+            alert.setHeaderText("No se encontró una partida guardada válida");
+            alert.setContentText("Crea una nueva partida o verifica que el archivo saves/game.dat exista y no esté corrupto.");
+            alert.showAndWait();
+            btnContinue.setDisable(true);
+        }
+    }
+
+    @FXML
+    private void handleExit() {
         System.exit(0);
     }
 }

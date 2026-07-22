@@ -3,8 +3,10 @@ package com.example.battleship.model;
 import com.example.battleship.model.enums.CellState;
 import com.example.battleship.model.exceptions.RepeatedShotException;
 import com.example.battleship.model.ships.Ship;
+import java.io.Serializable;
 
-public class Cell {
+public class Cell implements Serializable {
+    private static final long serialVersionUID = 1L;
     private CellState cellState;
     private final Coordinate coordinate;
     private Ship ship;
@@ -45,15 +47,15 @@ public class Cell {
         else if (cellState==CellState.OCCUPIED){
             setCellState(CellState.HIT);
             if(ship.registerHit()){
-               return cellState;
+               return CellState.SUNK;
             }
+            return CellState.HIT;
         }else{
             throw new RepeatedShotException("Cell already shot, current state: "+cellState.getSymbol(), cellState );
         }
-        return cellState;
     }
     @Override
     public String toString(){
-        return "Cell"+coordinate.toString()+"[State="+cellState+"]";
+        return "Cell"+coordinate+"[State="+cellState+"]";
     }
 }

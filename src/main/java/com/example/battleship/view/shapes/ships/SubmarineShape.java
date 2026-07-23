@@ -6,15 +6,35 @@ import javafx.scene.Group;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
-
+/**
+ * Utility factory for constructing the graphical 2D JavaFX representation of a Submarine.
+ * <p>
+ * Assembles vector shapes including an elongated rounded hull, a sail/conning tower,
+ * periscopes, radio antennas, propeller assembly, sonar dome, and lighting highlights.
+ * </p>
+ *
+ * @author Leonardo Alexis
+ * @author Julio Cesar
+ * @author Alejandro Velez
+ * @author Juan Esteban Mina
+ * @version 1.0
+ */
 public final class SubmarineShape {
-
+    /** Horizontal size multiplier corresponding to 3 grid cells. */
     private static final int SHIP_LENGTH_CELLS = 3;
+    /** Vertical scaling factor relative to individual cell height. */
     private static final double SHIP_HEIGHT_FACTOR = 0.70;
-
+    /**
+     * Private constructor to prevent instantiation of static factory utility.
+     */
     private SubmarineShape() {
     }
-
+    /**
+     * Creates a composite JavaFX {@link Group} representing the Submarine vessel.
+     *
+     * @param cellSize The width and height in pixels of a single grid cell.
+     * @return {@link Group} containing all vector elements of the rendered vessel.
+     */
     public static Group create(double cellSize) {
 
         Group ship = new Group();
@@ -29,7 +49,12 @@ public final class SubmarineShape {
 
         return ship;
     }
-
+    /**
+     * Constructs the primary submarine hull ellipse using gradient fills and border strokes.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildHull(Group ship, double cellSize) {
 
         double w = SHIP_LENGTH_CELLS * cellSize;
@@ -49,7 +74,12 @@ public final class SubmarineShape {
 
         ship.getChildren().add(hull);
     }
-
+    /**
+     * Builds the upper deck overlay ellipse and center waterline marker.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildDeck(Group ship, double cellSize) {
 
         double w = SHIP_LENGTH_CELLS * cellSize;
@@ -79,7 +109,12 @@ public final class SubmarineShape {
 
         ship.getChildren().add(center);
     }
-
+    /**
+     * Constructs the sail structure (conning tower), upper bridge, main periscope, and dual antennas.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildTower(Group ship, double cellSize) {
 
         double w = SHIP_LENGTH_CELLS * cellSize;
@@ -203,7 +238,12 @@ public final class SubmarineShape {
                 antennaRight
         );
     }
-
+    /**
+     * Builds the rear propulsion system including drive shaft, central hub, blades, and directional rudders.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildPropeller(Group ship, double cellSize) {
 
         double w = SHIP_LENGTH_CELLS * cellSize;
@@ -307,6 +347,12 @@ public final class SubmarineShape {
                 rudderBottom
         );
     }
+    /**
+     * Adds structural details including hull panel seam lines, access hatches, rivets, forward sonar dome, and maintenance vents.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildDetails(Group ship, double cellSize) {
 
         double w = SHIP_LENGTH_CELLS * cellSize;
@@ -467,6 +513,12 @@ public final class SubmarineShape {
                 bottom
         );
     }
+    /**
+     * Renders specular highlights, curvature shading arcs, tower reflections, and nose/tail edge caps.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildHighlights(Group ship, double cellSize) {
 
         double w = SHIP_LENGTH_CELLS * cellSize;
@@ -587,6 +639,12 @@ public final class SubmarineShape {
         );
 
     }
+    /**
+     * Constructs a soft, blurred shadow underneath the submarine hull.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildShadow(Group ship, double cellSize) {
 
         double w = SHIP_LENGTH_CELLS * cellSize;

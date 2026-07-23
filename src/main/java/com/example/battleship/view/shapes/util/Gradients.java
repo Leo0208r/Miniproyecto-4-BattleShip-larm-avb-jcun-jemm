@@ -3,13 +3,31 @@ package com.example.battleship.view.shapes.util;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
-
+/**
+ * Utility factory for constructing pre-configured JavaFX {@link LinearGradient} paints.
+ * <p>
+ * Provides vertical and horizontal color gradients used for rendering metallic vessel hulls,
+ * decks, superstructure towers, submarines, and light combatants with depth and lighting effects.
+ * </p>
+ *
+ * @author Leonardo Alexis
+ * @author Julio Cesar
+ * @author Alejandro Velez
+ * @author Juan Esteban Mina
+ * @version 1.0
+ */
 public final class Gradients {
-
-    private Gradients(){}
-
     /**
-     * Hull metallic gradient.
+     * Private constructor to prevent instantiation of static gradient utility.
+     */
+    private Gradients(){}
+    /**
+     * Creates a vertical metallic linear gradient for standard vessel hulls.
+     * <p>
+     * Features a multi-stop color progression transition from top highlights down to lower edge shadows.
+     * </p>
+     *
+     * @return {@link LinearGradient} configured for primary ship hulls.
      */
     public static LinearGradient hull(){
 
@@ -33,7 +51,12 @@ public final class Gradients {
     }
 
     /**
-     * Deck metallic gradient.
+     * Creates a horizontal metallic linear gradient for deck surfaces.
+     * <p>
+     * Transitions horizontally from lighter deck tones to darker shaded deck areas.
+     * </p>
+     *
+     * @return {@link LinearGradient} configured for horizontal deck overlays.
      */
     public static LinearGradient deck(){
 
@@ -55,7 +78,12 @@ public final class Gradients {
     }
 
     /**
-     * Tower gradient.
+     * Creates a vertical linear gradient for superstructure towers and command bridges.
+     * <p>
+     * Simulates downward light decay from roof edges to tower foundations.
+     * </p>
+     *
+     * @return {@link LinearGradient} configured for bridge towers.
      */
     public static LinearGradient tower(){
 
@@ -75,6 +103,14 @@ public final class Gradients {
         );
 
     }
+    /**
+     * Creates a vertical linear gradient optimized for rounded submarine hulls.
+     * <p>
+     * Fades smoothly from upper hull specular tones into deep aquatic border shadows.
+     * </p>
+     *
+     * @return {@link LinearGradient} configured for submarine bodies.
+     */
     public static LinearGradient submarineHull() {
 
         return new LinearGradient(
@@ -94,6 +130,11 @@ public final class Gradients {
         );
 
     }
+    /**
+     * Creates a simplified 3-stop vertical linear gradient for compact vessel hulls such as destroyers and frigates.
+     *
+     * @return {@link LinearGradient} configured for light combatant hulls.
+     */
     public static LinearGradient destroyerHull(){
 
         return new LinearGradient(

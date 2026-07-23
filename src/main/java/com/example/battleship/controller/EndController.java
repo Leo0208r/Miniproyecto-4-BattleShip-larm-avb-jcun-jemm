@@ -6,18 +6,42 @@ import com.example.battleship.view.SceneManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-
+/**
+ * Controller class for the game over / end game screen in Battleship.
+ * <p>
+ * Displays the match outcome (Victory or Defeat), presents detailed game statistics
+ * such as sunk ships and missed shots for both players, and handles clearing saved match data.
+ * </p>
+ *
+ * @author Leonardo Alexis
+ * @author Julio Cesar
+ * @author Alejandro Velez
+ * @author Juan Esteban Mina
+ * @version 1.0
+ */
 @SuppressWarnings("unused")
 public class EndController {
 
+    /** Title label indicating match outcome (Victory or Defeat). */
     @FXML private Label lblTitle;
+    /** Label displaying the human player's nickname. */
     @FXML private Label lblPlayerNickname;
+    /** Label displaying the count of enemy ships sunk by the player. */
     @FXML private Label lblEnemyShipsSunk;
+    /** Label displaying total missed shots made by the human player. */
     @FXML private Label lblPlayerMissedShots;
+    /** Label displaying total missed shots made by the AI. */
     @FXML private Label lblPlayerShipsSunk;
+    /** Button to return to the main menu screen. */
     @FXML private Label lblEnemyMissedShots;
     @FXML private Button btnMainMenu;
-
+    /**
+     * Initializes the end screen view automatically upon FXML loading.
+     * <p>
+     * Retrieves final statistics from {@link GameManager}, determines match outcome,
+     * updates UI labels, and removes active save files.
+     * </p>
+     */
     @FXML
     public void initialize() {
         GameManager gameManager = GameSession.getInstance().getCurrentGameManager();
@@ -39,23 +63,29 @@ public class EndController {
         lblPlayerShipsSunk.setText(gameManager.getHuman().getBoard().getFleet().getSunkShipsCount() + " / 10");
         lblEnemyMissedShots.setText(String.valueOf(countShots(gameManager.getHuman().getBoard().getBoard().values(), com.example.battleship.model.enums.CellState.WATER)));
 
-        // Limpiar la partida guardada al terminar
         clearSavedGameOnce();
     }
 
     /**
-     * Limpia la partida guardada una sola vez cuando se muestra la pantalla de fin.
-     * Esto previene que se acumulen partidas antiguas y asegura que el botón "Continuar"
-     * se deshabilite correctamente en el menú.
+     * Clears the current saved game session file to prevent resuming an ended match.
      */
     private void clearSavedGameOnce() {
         GameSession.getInstance().clearSavedGame();
     }
 
+    /**
+     * Counts the total number of cells matching a specific {@link CellState}.
+     *
+     * @param cells Collection of board cells to evaluate.
+     * @param state Target cell state (e.g., WATER for missed shots).
+     * @return Total count of cells matching the requested state.
+     */
     private long countShots(java.util.Collection<com.example.battleship.model.Cell> cells, com.example.battleship.model.enums.CellState state) {
         return cells.stream().filter(cell -> cell.getCellState() == state).count();
     }
-
+    /**
+     * Handles returning the user to the main menu view.
+     */
     @FXML
     private void onRestartButtonClick() {
         SceneManager.getInstance().changeScene("menu-view.fxml");

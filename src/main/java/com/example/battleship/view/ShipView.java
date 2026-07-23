@@ -12,72 +12,82 @@ import com.example.battleship.view.shapes.ShipShapeFactory;
 import javafx.scene.Group;
 import javafx.scene.layout.GridPane;
 
-
 /**
- * Representación visual 2D de un barco, dibujada con JavaFX Shapes
- * (un Rectangle con esquinas redondeadas + dos Circle en las puntas,
- * dando una forma de "cápsula" tipo submarino/nave).
+ * JavaFX {@link Group} component representing the visual display of a vessel on the game board grid.
+ * <p>
+ * Constructs 2D vector shapes using {@link ShipShapeFactory}, applies hit/sunk visual state CSS classes,
+ * and handles layout positioning spans inside JavaFX {@link GridPane} instances.
+ * </p>
  *
- * No depende del motor de juego: solo necesita el tamaño y la
- * orientación del barco para poder dibujarse, por lo que puede
- * construirse y probarse de forma aislada, antes de que exista
- * la lógica de turnos.
+ * @author Leonardo Alexis
+ * @author Julio Cesar
+ * @author Alejandro Velez
+ * @author Juan Esteban Mina
+ * @version 1.0
  */
-public class ShipView extends Group {
 
-    /** Debe coincidir con el tamaño de celda usado en GameController (32x32). */
+public class ShipView extends Group {
+    /** Standard grid cell dimension in pixels used for shape scaling. */
     public static final double CELL_SIZE = 32.0;
 
-
+    /** Graphical vector group representing the ship shape. */
     private final Group shape;
-
-    /** Construye la vista del barco usando las implementaciones detalladas en view.shapes */
+    /**
+     * Constructs a {@code ShipView} instance for a given model {@link Ship}.
+     *
+     * @param ship The model {@link Ship} instance to visualize.
+     */
     public ShipView(Ship ship) {
         ShipType type = detectType(ship);
         this.shape = ShipShapeFactory.create(type, ship.getOrientation(), CELL_SIZE);
         getChildren().add(shape);
         getStyleClass().add("ship-view");
-        // Por defecto, darle un viewOrder neutro: las marcas usan valores negativos
-        // para pintarse por encima; las celdas deben estar detrás.
+
         this.setViewOrder(0.0);
     }
 
-    // Los detalles de la forma están en los paquetes view.shapes; no necesitamos construir
-    // manualmente rectángulos aquí. Mantenemos MARGIN por compatibilidad futura.
 
-    /** Aplica el estilo visual de "tocado" (aún no hundido). */
+    /**
+     * Applies the hit visual style class to indicate damage on this vessel.
+     */
     public void markHit() {
         if (!getStyleClass().contains("ship-hit")) {
             getStyleClass().add("ship-hit");
         }
     }
-
-    /** Aplica el estilo visual de "hundido". */
+    /**
+     * Applies the sunk visual style class, sends the view layer back, and disables mouse transparency.
+     */
     public void markSunk() {
         getStyleClass().remove("ship-hit");
         if (!getStyleClass().contains("ship-sunk")) {
             getStyleClass().add("ship-sunk");
         }
-        // Enviar el ShipView al fondo (en caso necesario) y mantener viewOrder neutro
         this.toBack();
         this.setViewOrder(0.0);
         this.setMouseTransparent(true);
     }
 
     /**
-      /** Construye el ShipView correspondiente a un Ship del modelo,
-       * usando la forma detallada según su tipo y orientación.
-       */
+     * Static factory method to instantiate a new {@link ShipView} for a given {@link Ship}.
+     *
+     * @param ship The model {@link Ship} instance.
+     * @return A new {@link ShipView} instance.
+     */
       public static ShipView from(Ship ship) {
           return new ShipView(ship);
       }
-
+    /**
+     * Identifies the specific {@link ShipType} of a vessel based on class instance or unit length.
+     *
+     * @param ship The target {@link Ship} instance.
+     * @return The corresponding {@link ShipType} enum.
+     */
       private static ShipType detectType(Ship ship) {
           if (ship instanceof AircraftCarrier) return ShipType.AIRCRAFTCARRIER;
           if (ship instanceof Submarine) return ShipType.SUBMARINE;
           if (ship instanceof Destroyer) return ShipType.DESTROYER;
           if (ship instanceof Frigate) return ShipType.FRIGATE;
-          // fallback by size
           switch (ship.getSize()) {
               case 4: return ShipType.AIRCRAFTCARRIER;
               case 3: return ShipType.SUBMARINE;
@@ -87,10 +97,11 @@ public class ShipView extends Group {
       }
 
     /**
-     * Crea el ShipView de un barco y lo agrega al GridPane, alineado
-     * sobre las celdas que ocupa (usando colSpan/rowSpan según su
-     * tamaño y orientación). Asume que ship.getCells() está ordenado
-     * de proa a popa, tal como lo arma Board.calculateShipCoordinates().
+     * Creates a {@link ShipView} and adds it to the target {@link GridPane} occupying the appropriate coordinate span.
+     *
+     * @param grid The target {@link GridPane} board container.
+     * @param ship The model {@link Ship} to be placed.
+     * @return The created and placed {@link ShipView} instance.
      */
     public static ShipView placeOnGrid(GridPane grid, Ship ship) {
         ShipView view = from(ship);

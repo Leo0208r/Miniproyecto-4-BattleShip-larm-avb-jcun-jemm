@@ -6,15 +6,35 @@ import javafx.scene.Group;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
-
+/**
+ * Utility factory for constructing the graphical 2D JavaFX representation of a Frigate ship.
+ * <p>
+ * Assembles vector shapes including a compact hull, command bridge structure, naval artillery,
+ * missile launcher tubes, radar systems, and ambient lighting effects.
+ * </p>
+ *
+ * @author Leonardo Alexis
+ * @author Julio Cesar
+ * @author Alejandro Velez
+ * @author Juan Esteban Mina
+ * @version 1.0
+ */
 public final class FrigateShape {
-
+    /** Horizontal size multiplier corresponding to 1 grid cell. */
     private static final int SHIP_LENGTH_CELLS = 1;
+    /** Vertical scaling factor relative to individual cell height. */
     private static final double SHIP_HEIGHT_FACTOR = 0.72;
-
+    /**
+     * Private constructor to prevent instantiation of static factory utility.
+     */
     private FrigateShape() {
     }
-
+    /**
+     * Creates a composite JavaFX {@link Group} representing the Frigate vessel.
+     *
+     * @param cellSize The width and height in pixels of a single grid cell.
+     * @return {@link Group} containing all vector elements of the rendered vessel.
+     */
     public static Group create(double cellSize) {
 
         Group ship = new Group();
@@ -28,7 +48,12 @@ public final class FrigateShape {
 
         return ship;
     }
-
+    /**
+     * Constructs the primary hull polygon using gradient fills and border strokes.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildHull(Group ship, double cellSize) {
 
         double w = SHIP_LENGTH_CELLS * cellSize;
@@ -58,7 +83,12 @@ public final class FrigateShape {
         ship.getChildren().add(hull);
 
     }
-
+    /**
+     * Constructs the superstructure bridge, main mast, radar arrays, and communication antennas.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildBridge(Group ship, double cellSize) {
 
         double w = SHIP_LENGTH_CELLS * cellSize;
@@ -165,8 +195,12 @@ public final class FrigateShape {
                 antenna
         );
     }
-
-    private static void buildWeapons(Group ship, double cellSize) {
+    /**
+     * Builds ship armaments including the forward naval gun turret, missile launcher box, and light CIWS defense system.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */    private static void buildWeapons(Group ship, double cellSize) {
 
         double w = SHIP_LENGTH_CELLS * cellSize;
         double h = SHIP_HEIGHT_FACTOR * cellSize;
@@ -252,7 +286,12 @@ public final class FrigateShape {
                 ciws
         );
     }
-
+    /**
+     * Adds hull panel seam lines, access hatches, deck ventilation grates, and structural rivets.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildDetails(Group ship, double cellSize) {
 
         double w = SHIP_LENGTH_CELLS * cellSize;
@@ -378,7 +417,12 @@ public final class FrigateShape {
                 bottom
         );
     }
-
+    /**
+     * Renders specular highlights, soft edge shadows, central reflections, and bow/stern caps.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildHighlights(Group ship, double cellSize) {
 
         double w = SHIP_LENGTH_CELLS * cellSize;
@@ -532,7 +576,12 @@ public final class FrigateShape {
         );
 
     }
-
+    /**
+     * Constructs a soft, blurred shadow underneath the vessel hull.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildShadow(Group ship, double cellSize) {
 
         double w = SHIP_LENGTH_CELLS * cellSize;

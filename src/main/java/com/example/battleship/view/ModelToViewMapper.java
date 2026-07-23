@@ -9,15 +9,36 @@ import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-
 /**
- * Simple mapper that links a model Board with a GridPane created by the
- * controller. It listens to board events and updates the GridPane nodes.
+ * Mapper utility class that synchronizes a model {@link Board} instance with a JavaFX {@link GridPane} UI representation.
+ * <p>
+ * Responsible for placing initial ship shapes, rendering existing shot markers (for newly loaded or reset games),
+ * and registering event listeners to dynamically update cell views whenever board state transitions occur.
+ * </p>
+ *
+ * @author Leonardo Alexis
+ * @author Julio Cesar
+ * @author Alejandro Velez
+ * @author Juan Esteban Mina
+ * @version 1.0
  */
 public class ModelToViewMapper {
-
+    /**
+     * Default constructor for the mapper class.
+     */
+    /**
+     * Binds a model {@link Board} to a user interface {@link GridPane}.
+     * <p>
+     * Renders any existing ships (if {@code showShips} is {@code true}), paints existing shot markers for
+     * recorded cell states, and attaches a dynamic {@link BoardListener} to process real-time shot updates
+     * on the JavaFX Application Thread.
+     * </p>
+     *
+     * @param board     The source model {@link Board} containing game state and fleet data.
+     * @param grid      The target {@link GridPane} UI container representing the board grid.
+     * @param showShips {@code true} to render ship vector views onto the grid; {@code false} to keep ships hidden (e.g., enemy board).
+     */
     public static void bindBoardToGrid(Board board, GridPane grid, boolean showShips) {
-        // place existing ships if requested
         if (showShips) {
             for (Ship ship : board.getFleet().getShips()) {
                 // place ship visually using ShipView

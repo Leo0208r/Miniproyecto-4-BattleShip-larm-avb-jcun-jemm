@@ -13,18 +13,42 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
-
-
+/**
+ * Implements the Hunt-and-Target AI shooting strategy for Battleship.
+ * <p>
+ * Operates in two distinct states:
+ * </p>
+ * <ul>
+ *   <li><b>HUNT Mode:</b> Randomly fires at valid, unshot grid cells looking for an enemy vessel.</li>
+ *   <li><b>TARGET Mode:</b> Triggered when a shot hits a ship. Systematically enqueues adjacent neighboring
+ *   coordinates (up, down, left, right) and aligns shots along identified axes until the ship is SUNK.</li>
+ * </ul>
+ * <p>
+ * Implements {@link IShootingStrategy} and {@link Serializable} for AI state preservation across saves.
+ * </p>
+ *
+ * @author Leonardo Alexis
+ * @author Julio Cesar
+ * @author Alejandro Velez
+ * @author Juan Esteban Mina
+ * @version 1.0
+ */
 public class HuntTargetStrategy implements IShootingStrategy, Serializable {
-
+    /** Dimension of the square game board (10x10). */
     private static final int BOARD_SIZE = 10;
-
+    /** Set tracking all coordinates targeted in previous turns. */
     private final Set<Coordinate> shotCoordinates;
+    /** Set tracking coordinates that successfully scored a HIT on the current unsunk vessel. */
     private final Set<Coordinate> hitCoordinates;
+    /** Queue of high-priority target coordinates queued during TARGET mode. */
     private final Deque<Coordinate> targetCoordinates;
+    /** Random number generator for HUNT mode selection (re-initialized after deserialization). */
     private transient Random random;
+    /** Current operational shooting state (HUNT or TARGET). */
     private ShootingMode mode;
-
+    /**
+     * Constructs a new {@code HuntTargetStrategy} starting in {@link ShootingMode#HUNT} mode.
+     */
     public HuntTargetStrategy() {
         this.shotCoordinates = new HashSet<>();
         this.hitCoordinates = new HashSet<>();
@@ -32,7 +56,15 @@ public class HuntTargetStrategy implements IShootingStrategy, Serializable {
         this.random = new Random();
         this.mode = ShootingMode.HUNT;
     }
-
+    /**
+     * Selects the next coordinate to attack based on current state.
+     * <p>
+     * Returns a candidate from queued targets in TARGET mode if available;
+     * otherwise falls back to HUNT mode selecting an unshot random coordinate.
+     * </p>
+     *
+     * @return Target {@link Coordinate} to attack.
+     */
     @Override
     public Coordinate selectTarget() {
         if (mode == ShootingMode.TARGET) {
@@ -44,7 +76,12 @@ public class HuntTargetStrategy implements IShootingStrategy, Serializable {
         }
         return nextRandomUnshotCoordinate();
     }
-
+    /**
+     * Registers shot outcomes to update strategy intelligence and state.
+     *
+     * @param coordinate The target coordinate attacked.
+     * @param result     Resulting {@link CellState} (WATER, HIT, SUNK).
+     */
     @Override
     public void registerResult(Coordinate coordinate, CellState result) {
         shotCoordinates.add(coordinate);
@@ -68,7 +105,9 @@ public class HuntTargetStrategy implements IShootingStrategy, Serializable {
             default -> throw new IllegalArgumentException("Unexpected shot result: " + result);
         }
     }
-
+    /**
+     * Resets strategy internal history and reverts to standard HUNT mode.
+     */
     @Override
     public void reset() {
         shotCoordinates.clear();
@@ -77,7 +116,11 @@ public class HuntTargetStrategy implements IShootingStrategy, Serializable {
         mode = ShootingMode.HUNT;
     }
 
-
+    /**
+     * Generates an unshot random coordinate on the 10x10 board.
+     *
+     * @return Next random {@link Coordinate}.
+     */
     private Coordinate nextRandomUnshotCoordinate() {
         Coordinate coordinate;
         do {
@@ -88,7 +131,11 @@ public class HuntTargetStrategy implements IShootingStrategy, Serializable {
         return coordinate;
     }
 
-
+    /**
+     * Retrieves the next valid unshot candidate from the priority target queue.
+     *
+     * @return Valid target {@link Coordinate}, or {@code null} if queue is exhausted.
+     */
     private Coordinate nextValidTargetCandidate() {
         while (!targetCoordinates.isEmpty()) {
             Coordinate candidate = targetCoordinates.poll();
@@ -99,7 +146,11 @@ public class HuntTargetStrategy implements IShootingStrategy, Serializable {
         return null;
     }
 
-
+    /**
+     * Adds non-diagonal adjacent neighbors of a hit coordinate to the target queue.
+     *
+     * @param coordinate Central hit coordinate.
+     */
     private void enqueueNeighbors(Coordinate coordinate) {
         int row = coordinate.getRow();
         int col = coordinate.getCol();
@@ -118,7 +169,9 @@ public class HuntTargetStrategy implements IShootingStrategy, Serializable {
             }
         }
     }
-
+    /**
+     * Identifies linear ship orientation when multiple hits exist and prioritizes endpoints.
+     */
     private void enqueueAlignedTargets() {
         if (hitCoordinates.size() < 2) {
             return;
@@ -142,6 +195,12 @@ public class HuntTargetStrategy implements IShootingStrategy, Serializable {
         }
     }
 
+    /**
+     * Prepends high-priority coordinates at the front of the targeting deque.
+     *
+     * @param row Row index.
+     * @param col Column index.
+     */
     private void addTargetFront(int row, int col) {
         try {
             Coordinate candidate = new Coordinate(row, col);
@@ -152,6 +211,13 @@ public class HuntTargetStrategy implements IShootingStrategy, Serializable {
             // outside the board, ignore
         }
     }
+    /**
+     * Custom deserialization logic to restore non-serializable fields (e.g. Random).
+     *
+     * @param in ObjectInputStream instance.
+     * @throws IOException            If an I/O error occurs.
+     * @throws ClassNotFoundException If the class cannot be located.
+     */
     @Serial
     private void readObject(ObjectInputStream in)
             throws IOException, ClassNotFoundException {

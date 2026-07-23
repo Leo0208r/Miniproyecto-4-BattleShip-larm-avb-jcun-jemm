@@ -6,14 +6,34 @@ import javafx.scene.Group;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+/**
+ * Utility factory for constructing the graphical 2D JavaFX representation of a Destroyer ship.
+ * <p>
+ * Assembles vector shapes including the hull, superstructure bridge, naval artillery,
+ * Vertical Launching System (VLS), missile launchers, radar masts, and realistic ambient lighting.
+ * </p>
 
+ * @author Leonardo Alexis
+ * @author Julio Cesar
+ * @author Alejandro Velez
+ * @author Juan Esteban Mina
+ * @version 1.0
+ */
 public final class DestroyerShape {
-
+    /** Horizontal size multiplier corresponding to 2 grid cells. */
     private static final int SHIP_LENGTH_CELLS = 2;
+    /** Vertical scaling factor relative to individual cell height. */
     private static final double SHIP_HEIGHT_FACTOR = 0.72;
-
+    /**
+     * Private constructor to prevent instantiation of static factory utility.
+     */
     private DestroyerShape(){}
-
+    /**
+     * Creates a composite JavaFX {@link Group} representing the Destroyer vessel.
+     *
+     * @param cellSize The width and height in pixels of a single grid cell.
+     * @return {@link Group} containing all vector elements of the rendered vessel.
+     */
     public static Group create(double cellSize){
 
         Group ship = new Group();
@@ -27,7 +47,12 @@ public final class DestroyerShape {
 
         return ship;
     }
-
+    /**
+     * Constructs the command superstructure, navigation bridge, primary mast, radar arrays, and antennas.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildBridge(Group ship, double cellSize){
 
         double w = SHIP_LENGTH_CELLS * cellSize;
@@ -145,6 +170,13 @@ public final class DestroyerShape {
         );
 
     }
+    /**
+     * Builds ship weaponry systems including main gun turret, Vertical Launching System (VLS) cells,
+     * angled missile tubes, and CIWS close-in defense cannon.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildWeapons(Group ship, double cellSize){
 
         double w = SHIP_LENGTH_CELLS * cellSize;
@@ -256,6 +288,12 @@ public final class DestroyerShape {
         );
 
     }
+    /**
+     * Adds hull panel lines, access hatches, rivets, deck ventilation grids, and maintenance markings.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildDetails(Group ship, double cellSize){
 
         double w = SHIP_LENGTH_CELLS * cellSize;
@@ -382,6 +420,12 @@ public final class DestroyerShape {
         );
 
     }
+    /**
+     * Renders specular highlights, soft shadows, reflections on metal surfaces, and bow/stern caps.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildHighlights(Group ship, double cellSize){
 
         double w = SHIP_LENGTH_CELLS * cellSize;
@@ -518,6 +562,12 @@ public final class DestroyerShape {
         );
 
     }
+    /**
+     * Constructs a soft, blurred shadow underneath the vessel hull.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildShadow(Group ship, double cellSize){
 
         double w = SHIP_LENGTH_CELLS * cellSize;
@@ -536,6 +586,12 @@ public final class DestroyerShape {
 
         ship.getChildren().add(shadow);
     }
+    /**
+     * Constructs the primary hull polygon using gradient fills and border strokes.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildHull(Group ship, double cellSize){
 
         double w = SHIP_LENGTH_CELLS * cellSize;

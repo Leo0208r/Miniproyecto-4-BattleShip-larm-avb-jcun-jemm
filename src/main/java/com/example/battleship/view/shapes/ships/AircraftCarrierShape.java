@@ -7,15 +7,31 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
-
+/**
+ * Represents an Aircraft Carrier ship model in the game.
+ *
+ * @author Leonardo Alexis
+ * @author Julio Cesar
+ * @author Alejandro Velez
+ * @author Juan Esteban Mina
+ * @version 1.0
+ */
 public final class AircraftCarrierShape {
+    /** Horizontal size multiplier corresponding to 4 grid cells. */
     private static final double SHIP_WIDTH_CELLS = 4.0;
+    /** Vertical scaling factor relative to individual cell height. */
     private static final double SHIP_HEIGHT_FACTOR = 0.95;
-
-
+    /**
+     * Private constructor to prevent instantiation of static factory utility.
+     */
     private AircraftCarrierShape() {
     }
-
+    /**
+     * Creates a composite JavaFX {@link Group} representing the Aircraft Carrier.
+     *
+     * @param cellSize The width and height in pixels of a single grid cell.
+     * @return {@link Group} containing all vector elements of the rendered vessel.
+     */
     public static Group create(double cellSize) {
 
         Group ship = new Group();
@@ -30,7 +46,12 @@ public final class AircraftCarrierShape {
 
         return ship;
     }
-
+    /**
+     * Constructs and attaches the hull structures, bow reinforcements, and outer shadows.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildHull(Group ship, double cellSize) {
         double w = SHIP_WIDTH_CELLS * cellSize;
         double h = SHIP_HEIGHT_FACTOR * cellSize;
@@ -193,7 +214,12 @@ public final class AircraftCarrierShape {
                 bottomEdge
         );
     }
-
+    /**
+     * Builds main flight deck levels, aircraft elevators, and surface platforms.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildDeck(Group ship, double cellSize) {
         double w = SHIP_WIDTH_CELLS * cellSize;
         double h = SHIP_HEIGHT_FACTOR * cellSize;
@@ -364,7 +390,12 @@ public final class AircraftCarrierShape {
                 elevator2
         );
     }
-
+    /**
+     * Builds command tower island, radar arrays, masts, and bridge control windows.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildIsland(Group ship, double cellSize) {
         double w = SHIP_WIDTH_CELLS * cellSize;
         double h = SHIP_HEIGHT_FACTOR * cellSize;
@@ -526,7 +557,12 @@ public final class AircraftCarrierShape {
                 antenna2
         );
     }
-
+    /**
+     * Builds runway stripes, directional launch arrows, landing zone indicators, and deck edge lights.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildRunway(Group ship, double cellSize) {
         double w = SHIP_WIDTH_CELLS * cellSize;
         double h = SHIP_HEIGHT_FACTOR * cellSize;
@@ -680,7 +716,12 @@ public final class AircraftCarrierShape {
                 arrow
         );
     }
-
+    /**
+     * Renders defensive CIWS mounts, deck panel lines, hatch covers, ventilation vents, and metallic glints.
+     *
+     * @param ship     Parent {@link Group} container.
+     * @param cellSize Cell dimensions for layout calculations.
+     */
     private static void buildDetails(Group ship, double cellSize) {
         double w = SHIP_WIDTH_CELLS * cellSize;
         double h = SHIP_HEIGHT_FACTOR * cellSize;
@@ -872,10 +913,21 @@ public final class AircraftCarrierShape {
                 shine2
         );
     }
+    /**
+     * Calculates the total pixel width of the aircraft carrier based on cell size.
+     *
+     * @param cellSize Size of a single grid cell in pixels.
+     * @return Total width in pixels.
+     */
     private static double shipWidth(double cellSize) {
         return SHIP_WIDTH_CELLS * cellSize;
     }
-
+    /**
+     * Calculates the total pixel height of the aircraft carrier based on cell size.
+     *
+     * @param cellSize Size of a single grid cell in pixels.
+     * @return Total height in pixels.
+     */
     private static double shipHeight(double cellSize) {
         return SHIP_HEIGHT_FACTOR * cellSize;
     }

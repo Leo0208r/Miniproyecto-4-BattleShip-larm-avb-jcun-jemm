@@ -5,21 +5,31 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 
 /**
- * Marca visual de un disparo sobre una celda individual del tablero,
- * dibujada con JavaFX Shapes. Se usa para "agua" (un punto/splash) y
- * "tocado" (una X), separado de ShipView porque estas marcas viven
- * sobre celdas sueltas, no sobre el barco completo.
+ * Visual shot marker component drawn over an individual board cell using JavaFX {@link Group} shapes.
+ * <p>
+ * Displays specific visual representations for water misses (a splash dot), hits (a red X),
+ * and sunk status markers (a ring with crosshairs). These markers render independently of {@link ShipView}
+ * and sit above ship vectors in the z-order hierarchy.
+ * </p>
  *
- * El estado "hundido" se refleja llamando a ShipView.markSunk() en el
- * barco correspondiente, no aquí.
+ * @author Leonardo Alexis
+ * @author Julio Cesar
+ * @author Alejandro Velez
+ * @author Juan Esteban Mina
+ * @version 1.0
  */
 public class ShotMarkView extends Group {
-
+    /**
+     * Private constructor to instantiate a base shot mark group with the CSS style class applied.
+     */
     private ShotMarkView() {
         getStyleClass().add("shot-mark");
     }
-
-    /** Punto pequeño centrado en la celda, para un disparo al agua. */
+    /**
+     * Creates a visual marker for a missed shot landing in water (a blue circle splash).
+     *
+     * @return A configured {@code ShotMarkView} for a water miss.
+     */
     public static ShotMarkView water() {
         ShotMarkView mark = new ShotMarkView();
         // Marcas deben tener viewOrder mucho menor para dibujarse por encima de los barcos
@@ -32,8 +42,11 @@ public class ShotMarkView extends Group {
         mark.getChildren().add(splash);
         return mark;
     }
-
-    /** X centrada en la celda, para un disparo que tocó un barco. */
+    /**
+     * Creates a visual marker for a successful shot hit on a vessel cell (a red diagonal X).
+     *
+     * @return A configured {@code ShotMarkView} for a successful hit.
+     */
     public static ShotMarkView hit() {
         ShotMarkView mark = new ShotMarkView();
         // Marcas deben tener viewOrder mucho menor para dibujarse por encima de los barcos
@@ -53,8 +66,12 @@ public class ShotMarkView extends Group {
         mark.getChildren().addAll(diagonal1, diagonal2);
         return mark;
     }
-
-    /** Marcador más intenso para una celda perteneciente a un barco hundido. */
+    /**
+     * Creates an intensified visual marker for a cell belonging to a completely destroyed/sunk vessel
+     * (a dark red target ring combined with a red diagonal X).
+     *
+     * @return A configured {@code ShotMarkView} for a sunk vessel cell.
+     */
     public static ShotMarkView sunk() {
         ShotMarkView mark = new ShotMarkView();
         // Marcas deben tener viewOrder mucho menor para dibujarse por encima de los barcos

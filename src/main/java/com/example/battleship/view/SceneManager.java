@@ -7,20 +7,41 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Objects;
-
+/**
+ * Singleton manager class responsible for controlling window transitions, loading FXML layouts,
+ * and applying application-wide styling and window icons in JavaFX.
+ *
+ * @author Leonardo Alexis
+ * @author Julio Cesar
+ * @author Alejandro Velez
+ * @author Juan Esteban Mina
+ * @version 1.0
+ */
 public class SceneManager {
+    /** Singleton instance of the SceneManager. */
     private static SceneManager instance;
+    /** Primary application stage. */
     private Stage stage;
-
+    /**
+     * Private constructor to enforce the Singleton design pattern.
+     */
     private SceneManager() {}
-
+    /**
+     * Retrieves the global static instance of the {@link SceneManager}.
+     *
+     * @return The single {@link SceneManager} instance.
+     */
     public static SceneManager getInstance() {
         if (instance == null) {
             instance = new SceneManager();
         }
         return instance;
     }
-
+    /**
+     * Configures the primary window {@link Stage} for scene switching and attaches the default app icon.
+     *
+     * @param stage The primary JavaFX {@link Stage} instance.
+     */
     public void setStage(Stage stage) {
         this.stage = stage;
 
@@ -30,7 +51,11 @@ public class SceneManager {
 
         stage.getIcons().add(icon);
     }
-
+    /**
+     * Loads a specified FXML layout file, attaches the global stylesheet, and sets it as the active scene.
+     *
+     * @param fxmlFile The filename of the FXML resource to load (e.g., "MainView.fxml").
+     */
     public void changeScene(String fxmlFile) {
         try {
             java.net.URL fxmlUrl = getClass().getResource("/com/example/battleship/fxml/" + fxmlFile);

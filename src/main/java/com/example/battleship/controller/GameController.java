@@ -27,25 +27,92 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Main controller for the Battleship gameplay view.
+ * <p>
+ * Manages player interactions on the enemy grid, handles turn scheduling for the AI,
+ * updates game status labels, and renders visual markers (e.g., water images and hits).
+ * </p>
+ *
+ * @author Leonardo Alexis
+ * @author Julio Cesar
+ * @author Alejandro Velez
+ * @author Juan Esteban Mina
+ * @version 1.0
+ */
 public class GameController {
 
+    /**
+     * Logger instance for tracking application events and error handling.
+     */
     private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
+    /**
+     * GridPane representing the human player's board.
+     */
+    @FXML
+    private GridPane gridPlayerBoard;
+    /**
+     * GridPane representing the AI opponent's radar grid.
+     */
+    @FXML
+    private GridPane gridEnemyBoard;
+    /**
+     * Label displaying the active player's nickname.
+     */
+    @FXML
+    private Label lblPlayerName;
+    /**
+     * Label showing the count of remaining ships for the human player.
+     */
+    @FXML
+    private Label lblPlayerShipsLeft;
+    /**
+     * Label indicating whose turn is currently active.
+     */
+    @FXML
+    private Label lblTurnStatus;
+    /**
+     * Label showing the count of remaining ships for the enemy player.
+     */
+    @FXML
+    private Label lblEnemyShipsLeft;
+    /**
+     * Label displaying outcome messages for the last performed action.
+     */
+    @FXML
+    private Label actionStatusLabel;
+    /**
+     * Toggle button for showing or hiding enemy ships via satellite view.
+     */
+    @FXML
+    private ToggleButton btnToggleEnemyBoard;
+    /**
+     * Button for surrendering and saving the current game state.
+     */
+    @FXML
+    private Button btnSaveAndExit;
 
-    @FXML private GridPane gridPlayerBoard;
-    @FXML private GridPane gridEnemyBoard;
-    @FXML private Label lblPlayerName;
-    @FXML private Label lblPlayerShipsLeft;
-    @FXML private Label lblTurnStatus;
-    @FXML private Label lblEnemyShipsLeft;
-    @FXML private Label actionStatusLabel;
-    @FXML private ToggleButton btnToggleEnemyBoard;
-    @FXML private Button btnSaveAndExit;
-
+    /**
+     * Flag indicating whether the satellite view showing enemy ships is active.
+     */
     private boolean showingEnemyShips = false;
+    /**
+     * Active game manager handling business and match logic.
+     */
     private GameManager gameManager;
+    /**
+     * Executor service for running AI turns asynchronously with delays.
+     */
     private final ScheduledExecutorService machineExecutor = Executors.newSingleThreadScheduledExecutor();
+    /**
+     * Prevents multiple scheduled machine turn executions simultaneously.
+     */
     private volatile boolean machineTurnScheduled;
 
+    /**
+     * Initializes the controller automatically upon FXML loading.
+     * Restores game session data, constructs grid layouts, and binds board models to views.
+     */
     @FXML
     public void initialize() {
         gameManager = GameSession.getInstance().requireGameManager();
@@ -71,6 +138,12 @@ public class GameController {
         actionStatusLabel.setText("Selecciona una coordenada en el radar enemigo.");
     }
 
+    /**
+     * Builds a grid layout filled with interactive or static {@link Pane} instances.
+     *
+     * @param grid          The {@link GridPane} to populate.
+     * @param isInteractive {@code true} if cells should react to mouse hovering and clicks.
+     */
     private void buildGrid(GridPane grid, boolean isInteractive) {
         grid.getChildren().clear();
         for (int row = 0; row < 10; row++) {
@@ -89,6 +162,11 @@ public class GameController {
         }
     }
 
+    /**
+     * Handles mouse click events on enemy radar cells to perform attack shots.
+     *
+     * @param event The mouse event containing target cell details.
+     */
     private void handleAttackEvent(MouseEvent event) {
         Pane targetCell = (Pane) event.getSource();
         String[] coords = targetCell.getId().split("_");
@@ -150,6 +228,9 @@ public class GameController {
         }
     }
 
+    /**
+     * Toggles the satellite view to temporarily show or hide unsunk enemy ships.
+     */
     @FXML
     private void onViewEnemyShipsButtonClick() {
         showingEnemyShips = !showingEnemyShips;
@@ -179,6 +260,9 @@ public class GameController {
         }
     }
 
+    /**
+     * Handles surrender events, saving the match state before switching to the main menu.
+     */
     @FXML
     private void onSurrenderButtonClick() {
         persistGame();
@@ -186,10 +270,16 @@ public class GameController {
         SceneManager.getInstance().changeScene("menu-view.fxml");
     }
 
+    /**
+     * Persists the current game session state to disk storage.
+     */
     private void persistGame() {
         GameSession.getInstance().saveCurrentGame();
     }
 
+    /**
+     * Restores visual representations of enemy ships that were previously sunk.
+     */
     private void restoreRevealedSunkenShips() {
         for (Ship s : gameManager.getRevealedSunkenShips()) {
             try {
@@ -212,6 +302,9 @@ public class GameController {
         }
     }
 
+    /**
+     * Refreshes text counters displaying remaining and sunk ships for both sides.
+     */
     private void refreshCounters() {
         int humanRemaining = gameManager.getHuman().getBoard().getFleet().getRemainingShipsCount();
         int machineRemaining = gameManager.getMachine().getBoard().getFleet().getRemainingShipsCount();
@@ -219,6 +312,11 @@ public class GameController {
         lblEnemyShipsLeft.setText("Flota Enemiga: Restantes " + machineRemaining + "/10 | Hundidos " + gameManager.getMachine().getBoard().getFleet().getSunkShipsCount() + "/10");
     }
 
+    /**
+     * Enforces the rendering view order (z-index) of nodes within a grid board.
+     *
+     * @param grid The target {@link GridPane} to adjust.
+     */
     private void enforceGridChildrenViewOrder(GridPane grid) {
         for (var node : grid.getChildren()) {
             if (node instanceof Pane) {
@@ -231,6 +329,9 @@ public class GameController {
         }
     }
 
+    /**
+     * Schedules the execution of the AI player's turn with a slight delay.
+     */
     private void scheduleMachineTurn() {
         if (machineTurnScheduled) {
             return;
@@ -240,6 +341,9 @@ public class GameController {
         machineExecutor.schedule(this::executeMachineTurnStep, 600, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Executes an AI shooting turn step and handles turn repetitions or match ending.
+     */
     private void executeMachineTurnStep() {
         try {
             CellState result = gameManager.machineShoot();
@@ -271,6 +375,11 @@ public class GameController {
         }
     }
 
+    /**
+     * Reveals an enemy ship on the board view once it has been destroyed completely.
+     *
+     * @param hitCoordinate The coordinate where the final fatal shot landed.
+     */
     private void revealSunkenShip(Coordinate hitCoordinate) {
         try {
             Cell cell = gameManager.getMachine().getBoard().getCell(hitCoordinate);

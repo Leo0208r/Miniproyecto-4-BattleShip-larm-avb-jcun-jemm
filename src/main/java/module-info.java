@@ -1,3 +1,12 @@
+/**
+ * Main module declaration for the Battleship game application.
+ *
+ * @author Leonardo Alexis
+ * @author Julio Cesar
+ * @author Alejandro Velez
+ * @author Juan Esteban Mina
+ * @version 1.0
+ */
 module com.example.battleship {
     requires javafx.controls;
     requires javafx.fxml;

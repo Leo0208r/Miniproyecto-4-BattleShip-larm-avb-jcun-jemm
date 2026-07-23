@@ -64,15 +64,17 @@ class CoordinateTest {
     }
 
     @Test
+    @SuppressWarnings("AssertBetweenInconvertibleTypes")
     void shouldNotBeEqualToNullOrOtherType() {
         Coordinate a = new Coordinate(0, 0);
-        assertNotEquals(a, null);
-        assertNotEquals(a, "A1");
+        assertNotEquals(null, a);
+        assertNotEquals("A1", a);
     }
 
     @Test
-    void shouldBeEqualToItself() {
-        Coordinate a = new Coordinate(5, 5);
+    @SuppressWarnings("EqualsWithItself")
+    void shouldBeEqualToItself(){
+    Coordinate a = new Coordinate(5, 5);
         assertEquals(a, a);
     }
 }

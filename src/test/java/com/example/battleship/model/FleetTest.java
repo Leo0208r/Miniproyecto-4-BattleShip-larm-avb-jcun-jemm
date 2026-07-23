@@ -2,6 +2,7 @@ package com.example.battleship.model;
 
 import com.example.battleship.model.enums.CellState;
 import com.example.battleship.model.enums.Orientation;
+import com.example.battleship.model.enums.ShipType;
 import com.example.battleship.model.ships.AircraftCarrier;
 import com.example.battleship.model.ships.Frigate;
 import com.example.battleship.model.ships.Ship;
@@ -100,5 +101,22 @@ class FleetTest {
         Fleet fleet = new Fleet();
 
         assertTrue(fleet.isFleetSunk());
+    }
+
+    @Test
+    void standardCompositionShouldHaveTenShipsWithCorrectDistribution() {
+        List<ShipType> composition = Fleet.getStandardComposition();
+
+        assertEquals(10, composition.size());
+
+        long carriers = composition.stream().filter(t -> t == ShipType.AIRCRAFTCARRIER).count();
+        long submarines = composition.stream().filter(t -> t == ShipType.SUBMARINE).count();
+        long destroyers = composition.stream().filter(t -> t == ShipType.DESTROYER).count();
+        long frigates = composition.stream().filter(t -> t == ShipType.FRIGATE).count();
+
+        assertEquals(1, carriers);
+        assertEquals(2, submarines);
+        assertEquals(3, destroyers);
+        assertEquals(4, frigates);
     }
 }

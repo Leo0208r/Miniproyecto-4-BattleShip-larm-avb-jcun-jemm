@@ -39,6 +39,16 @@ public class EndController {
         lblPlayerShipsSunk.setText(gameManager.getHuman().getBoard().getFleet().getSunkShipsCount() + " / 10");
         lblEnemyMissedShots.setText(String.valueOf(countShots(gameManager.getHuman().getBoard().getBoard().values(), com.example.battleship.model.enums.CellState.WATER)));
 
+        // Limpiar la partida guardada al terminar
+        clearSavedGameOnce();
+    }
+
+    /**
+     * Limpia la partida guardada una sola vez cuando se muestra la pantalla de fin.
+     * Esto previene que se acumulen partidas antiguas y asegura que el botón "Continuar"
+     * se deshabilite correctamente en el menú.
+     */
+    private void clearSavedGameOnce() {
         GameSession.getInstance().clearSavedGame();
     }
 
